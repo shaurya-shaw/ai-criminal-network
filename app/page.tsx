@@ -1,69 +1,71 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React from "react";
+import GridBackground from "./components/GridBackground";
+import EntityNodesWidget from "./components/EntityNodesWidget";
+import AuthCard from "./components/AuthCard";
+import { HyperText } from "@/components/ui/hyper-text";
+
+export default function LoginPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 md:p-10 lg:p-14 overflow-hidden bg-[#08090c]">
+      <GridBackground />
+
+      <div className="relative z-10 w-full max-w-6xl border border-white/[0.14] bg-[#0c0d12]/80 backdrop-blur-md p-6 sm:p-8 md:p-12 lg:p-16 shadow-[0_0_60px_rgba(0,0,0,0.85)]">
+        <div className="absolute -top-[1px] -left-[1px] w-4 h-4 border-t-2 border-l-2 border-white/60 pointer-events-none" />
+        <div className="absolute -top-[1px] -right-[1px] w-4 h-4 border-t-2 border-r-2 border-white/60 pointer-events-none" />
+        <div className="absolute -bottom-[1px] -left-[1px] w-4 h-4 border-b-2 border-l-2 border-white/60 pointer-events-none" />
+        <div className="absolute -bottom-[1px] -right-[1px] w-4 h-4 border-b-2 border-r-2 border-white/60 pointer-events-none" />
+
+        <div className="hidden sm:flex absolute -top-3 left-10 px-2 bg-[#090a0d] border border-white/10 text-[9px] font-mono tracking-widest text-white/40 uppercase">
+          SECURE TERMINAL // NETWORK_GRAPH_V1
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="hidden sm:flex absolute -bottom-3 right-10 px-2 bg-[#090a0d] border border-white/10 text-[9px] font-mono tracking-widest text-white/40 uppercase">
+          FORENSIC INTELLIGENCE ENGINE
         </div>
-      </main>
-    </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-stretch min-h-[520px]">
+          <div className="lg:col-span-7 flex flex-col justify-between gap-10 h-full">
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-5 bg-white shrink-0 animate-cursor-blink shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+              <span className="text-sm md:text-base font-mono font-bold tracking-[0.3em] text-white uppercase">
+                <HyperText>INVESTIGATE</HyperText>
+              </span>
+              <span className="ml-2 px-2 py-0.5 text-[9px] font-mono tracking-widest text-emerald-400/80 border border-emerald-400/30 uppercase">
+                System Live
+              </span>
+            </div>
+
+            <div className="space-y-5 my-auto">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-mono font-bold tracking-tight text-white leading-[1.12]">
+                <span className="block">EVERY CONNECTION</span>
+                <span className="block text-white/90">LEAVES</span>
+                <span className="block text-white/70">A TRACE.</span>
+              </h1>
+
+              <p className="text-sm sm:text-base text-white/60 font-mono max-w-lg leading-relaxed pt-2">
+                Fuse FIRs, call records, financial data, and surveillance
+                reports into one relationship graph — and see the network your
+                suspects don&apos;t know you can see.
+              </p>
+            </div>
+
+            <div className="pt-4 border-t border-white/[0.08]">
+              <EntityNodesWidget />
+            </div>
+          </div>
+
+          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+            <AuthCard />
+          </div>
+        </div>
+      </div>
+
+      <div className="fixed bottom-2 inset-x-0 flex justify-center pointer-events-none z-20">
+        <div className="text-[10px] font-mono text-white/20 tracking-widest uppercase">
+          RESTRICTED ACCESS // AUTHORIZED PERSONNEL ONLY
+        </div>
+      </div>
+    </main>
   );
 }
