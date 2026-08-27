@@ -7,43 +7,43 @@ export default function GridBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
       {/* Base Grid */}
-      <div className="absolute inset-0 forensic-grid opacity-75" />
+      <div className="absolute inset-0 forensic-grid opacity-90" />
       
       {/* Dense Micro Grid */}
-      <div className="absolute inset-0 forensic-grid-dense opacity-40" />
+      <div className="absolute inset-0 forensic-grid-dense opacity-55" />
 
       {/* Sparkles Particle Background */}
-      <div className="absolute inset-0 w-full h-full opacity-90">
+      <div className="absolute inset-0 w-full h-full opacity-100">
         <SparklesCore
           id="tsparticles-background"
           background="transparent"
-          minSize={0.8}
-          maxSize={2.4}
-          particleDensity={75}
+          minSize={0.6}
+          maxSize={2.8}
+          particleDensity={100}
           className="w-full h-full"
           particleColor="#FFFFFF"
-          speed={0.7}
+          speed={0.8}
         />
       </div>
 
       {/* Noise Texture Layer */}
-      <div className="absolute inset-0 bg-noise opacity-30 mix-blend-overlay" />
+      <div className="absolute inset-0 bg-noise opacity-20 mix-blend-overlay" />
 
       {/* Minimal Ambient Glow behind hero & sign-in */}
       <div 
-        className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-[550px] h-[550px] rounded-full blur-[140px] opacity-[0.035] pointer-events-none"
+        className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-[550px] h-[550px] rounded-full blur-[140px] opacity-[0.05] pointer-events-none"
         style={{ background: "radial-gradient(circle, #ffffff 0%, transparent 70%)" }}
       />
       <div 
-        className="absolute top-1/2 right-1/4 -translate-y-1/2 translate-x-1/2 w-[450px] h-[450px] rounded-full blur-[120px] opacity-[0.04] pointer-events-none"
+        className="absolute top-1/2 right-1/4 -translate-y-1/2 translate-x-1/2 w-[450px] h-[450px] rounded-full blur-[120px] opacity-[0.06] pointer-events-none"
         style={{ background: "radial-gradient(circle, #a3b8cc 0%, transparent 70%)" }}
       />
 
-      {/* Dark Vignette Overlay for Depth */}
+      {/* Dark Vignette Overlay with Open Translucent Center */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at center, transparent 30%, #090a0d 95%)"
+          background: "radial-gradient(ellipse at center, transparent 45%, rgba(9,10,13,0.85) 100%)"
         }}
       />
 

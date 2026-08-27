@@ -12,7 +12,7 @@ export default function SignInPage() {
       <GridBackground />
 
       {/* Main Forensic Outer Container (Matches Wireframe Border Box) */}
-      <div className="relative z-10 w-full max-w-6xl border border-white/[0.14] bg-[#0c0d12]/80 backdrop-blur-md p-6 sm:p-8 md:p-12 lg:p-16 transition-all duration-300 shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+      <div className="relative z-10 w-full max-w-6xl border border-white/[0.18] bg-black/20 backdrop-blur-[2px] p-6 sm:p-8 md:p-12 lg:p-16 transition-all duration-300 shadow-[0_0_80px_rgba(0,0,0,0.6)]">
         {/* Wireframe Style Corner Tick Markings */}
         <div className="absolute -top-[1px] -left-[1px] w-4 h-4 border-t-2 border-l-2 border-white/60 pointer-events-none" />
         <div className="absolute -top-[1px] -right-[1px] w-4 h-4 border-t-2 border-r-2 border-white/60 pointer-events-none" />

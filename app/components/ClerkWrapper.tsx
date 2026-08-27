@@ -40,7 +40,7 @@ export default function ClerkWrapper({ children }: ClerkWrapperProps) {
         elements: {
           rootBox: "w-full",
           cardBox: "w-full shadow-none",
-          card: "bg-[#11131a]/95 backdrop-blur-md border border-white/[0.12] rounded-none shadow-2xl font-mono text-white p-7 sm:p-8 hover:border-white/20 transition-colors w-full",
+          card: "bg-[#0d0f17]/55 backdrop-blur-md border border-white/[0.18] rounded-none shadow-[0_12px_40px_rgba(0,0,0,0.6)] font-mono text-white p-7 sm:p-8 hover:border-white/30 transition-colors w-full",
           headerTitle: "text-white font-mono text-xl sm:text-2xl font-medium tracking-tight",
           headerSubtitle: "text-white/40 text-xs font-sans mt-1",
           socialButtonsBlockButton:

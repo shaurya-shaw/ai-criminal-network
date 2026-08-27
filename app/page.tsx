@@ -11,7 +11,9 @@ export default function LoginPage() {
     <main className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 md:p-10 lg:p-14 overflow-hidden bg-[#08090c]">
       <GridBackground />
 
-      <div className="relative z-10 w-full max-w-6xl border border-white/[0.14] bg-[#0c0d12]/80 backdrop-blur-md p-6 sm:p-8 md:p-12 lg:p-16 shadow-[0_0_60px_rgba(0,0,0,0.85)]">
+      {/* Main Forensic Outer Container (Transparent Glassmorphic Wireframe Box) */}
+      <div className="relative z-10 w-full max-w-6xl border border-white/[0.18] bg-black/65  p-6 sm:p-8 md:p-12 lg:p-16 transition-all duration-300 shadow-[0_0_80px_rgba(0,0,0,0.6)]">
+        {/* Wireframe Style Corner Tick Markings */}
         <div className="absolute -top-[1px] -left-[1px] w-4 h-4 border-t-2 border-l-2 border-white/60 pointer-events-none" />
         <div className="absolute -top-[1px] -right-[1px] w-4 h-4 border-t-2 border-r-2 border-white/60 pointer-events-none" />
         <div className="absolute -bottom-[1px] -left-[1px] w-4 h-4 border-b-2 border-l-2 border-white/60 pointer-events-none" />

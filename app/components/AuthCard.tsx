@@ -161,7 +161,7 @@ export default function AuthCard() {
         {/* FRONT SIDE: SIGN IN                                                       */}
         {/* ========================================================================= */}
         <div
-          className={`relative w-full bg-[#11131a]/95 backdrop-blur-md border border-white/[0.12] p-7 md:p-8 rounded-none shadow-2xl overflow-hidden transition-colors duration-300 hover:border-white/20 ${
+          className={`relative w-full bg-[#0d0f17]/55 backdrop-blur-md border border-white/[0.18] p-7 md:p-8 rounded-none shadow-[0_12px_40px_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-300 hover:border-white/30 ${
             isFlipped ? "pointer-events-none" : ""
           }`}
           style={{
@@ -351,7 +351,7 @@ export default function AuthCard() {
         {/* BACK SIDE: SIGN UP / REGISTRATION                                         */}
         {/* ========================================================================= */}
         <div
-          className={`absolute inset-0 w-full bg-[#11131a]/95 backdrop-blur-md border border-white/[0.12] p-7 md:p-8 rounded-none shadow-2xl overflow-hidden transition-colors duration-300 hover:border-white/20 ${
+          className={`absolute inset-0 w-full bg-[#0d0f17]/55 backdrop-blur-md border border-white/[0.18] p-7 md:p-8 rounded-none shadow-[0_12px_40px_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-300 hover:border-white/30 ${
             !isFlipped ? "pointer-events-none" : ""
           }`}
           style={{
