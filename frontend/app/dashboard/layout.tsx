@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { usePathname } from "next/navigation";
 import GridBackground from "../components/GridBackground";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
@@ -11,11 +12,19 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);
+  const pathname = usePathname();
+
+  // Disable background sparkles on case detail pages (e.g. /dashboard/cases/CASE-0091)
+  const isCaseDetailPage = Boolean(
+    pathname &&
+      pathname.startsWith("/dashboard/cases/") &&
+      pathname !== "/dashboard/cases",
+  );
 
   return (
     <div className="relative min-h-screen w-full bg-[#090a0d] text-white font-mono overflow-hidden flex flex-col">
       {/* Fixed grid background behind everything */}
-      <GridBackground />
+      <GridBackground showSparkles={!isCaseDetailPage} />
 
       {/* App shell */}
       <div className="relative z-10 flex flex-col h-screen">

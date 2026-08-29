@@ -3,7 +3,13 @@
 import React from "react";
 import { SparklesCore } from "@/components/ui/sparkles";
 
-export default function GridBackground() {
+interface GridBackgroundProps {
+  showSparkles?: boolean;
+}
+
+export default function GridBackground({
+  showSparkles = true,
+}: GridBackgroundProps) {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
       {/* Base Grid */}
@@ -13,18 +19,20 @@ export default function GridBackground() {
       <div className="absolute inset-0 forensic-grid-dense opacity-55" />
 
       {/* Sparkles Particle Background */}
-      <div className="absolute inset-0 w-full h-full opacity-100">
-        <SparklesCore
-          id="tsparticles-background"
-          background="transparent"
-          minSize={0.6}
-          maxSize={2.8}
-          particleDensity={100}
-          className="w-full h-full"
-          particleColor="#FFFFFF"
-          speed={0.8}
-        />
-      </div>
+      {showSparkles && (
+        <div className="absolute inset-0 w-full h-full opacity-100">
+          <SparklesCore
+            id="tsparticles-background"
+            background="transparent"
+            minSize={0.6}
+            maxSize={2.8}
+            particleDensity={100}
+            className="w-full h-full"
+            particleColor="#FFFFFF"
+            speed={0.8}
+          />
+        </div>
+      )}
 
       {/* Noise Texture Layer */}
       <div className="absolute inset-0 bg-noise opacity-20 mix-blend-overlay" />
