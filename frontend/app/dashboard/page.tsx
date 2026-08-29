@@ -1,174 +1,305 @@
 "use client";
 
 import React from "react";
-import { UserButton, useUser } from "@clerk/nextjs";
-import GridBackground from "../components/GridBackground";
+import { useUser } from "@clerk/nextjs";
 import {
-  ShieldAlert,
-  Activity,
-  Network,
+  FolderOpen,
   Users,
-  Terminal,
-  Database,
+  Network,
+  ShieldAlert,
+  ArrowUpRight,
+  ArrowDownRight,
+  Activity,
+  AlertTriangle,
+  Wifi,
+  DollarSign,
 } from "lucide-react";
+import TerminalCard from "./components/TerminalCard";
+import Link from "next/link";
 
-export default function DashboardPage() {
+const statCards = [
+  {
+    label: "ACTIVE CASES",
+    value: "12",
+    delta: "+2 this week",
+    deltaUp: true,
+    icon: FolderOpen,
+  },
+  {
+    label: "TOTAL ENTITIES",
+    value: "1,284",
+    delta: "+47 identified",
+    deltaUp: true,
+    icon: Users,
+  },
+  {
+    label: "NETWORKS",
+    value: "43",
+    delta: "7 cross-border",
+    deltaUp: null,
+    icon: Network,
+  },
+  {
+    label: "ALERTS",
+    value: "17",
+    delta: "3 critical",
+    deltaUp: false,
+    icon: ShieldAlert,
+  },
+];
+
+const activeCases = [
+  {
+    id: "CASE-0091",
+    name: "Operation Black Web",
+    entities: 43,
+    priority: "HIGH" as const,
+    status: "ACTIVE",
+    updated: "2h ago",
+  },
+  {
+    id: "CASE-0092",
+    name: "Financial Investigation",
+    entities: 18,
+    priority: "MEDIUM" as const,
+    status: "ACTIVE",
+    updated: "5h ago",
+  },
+  {
+    id: "CASE-0088",
+    name: "Narco Supply Route",
+    entities: 76,
+    priority: "HIGH" as const,
+    status: "ACTIVE",
+    updated: "12h ago",
+  },
+];
+
+const priorityAlerts = [
+  {
+    label: "Network anomaly detected",
+    color: "bg-red-400",
+    time: "14 min ago",
+    icon: Wifi,
+  },
+  {
+    label: "New connection established",
+    color: "bg-amber-400",
+    time: "1h ago",
+    icon: Activity,
+  },
+  {
+    label: "Financial spike – CASE-0092",
+    color: "bg-amber-400",
+    time: "2h ago",
+    icon: DollarSign,
+  },
+  {
+    label: "Unidentified entity flagged",
+    color: "bg-cyan-400",
+    time: "3h ago",
+    icon: AlertTriangle,
+  },
+];
+
+const priorityColors: Record<string, string> = {
+  HIGH: "text-red-400 border-red-500/30 bg-red-950/40",
+  MEDIUM: "text-amber-400 border-amber-500/30 bg-amber-950/40",
+  LOW: "text-cyan-400 border-cyan-500/30 bg-cyan-950/40",
+};
+
+export default function DashboardOverview() {
   const { user, isLoaded } = useUser();
 
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12 ? "GOOD MORNING" : hour < 17 ? "GOOD AFTERNOON" : "GOOD EVENING";
+
   return (
-    <main className="relative min-h-screen w-full bg-[#090a0d] text-white p-4 sm:p-6 md:p-10 font-mono overflow-x-hidden">
-      {/* Dynamic Grid Background */}
-      <GridBackground />
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Welcome header */}
+      <div className="space-y-1">
+        <h1 className="text-base sm:text-lg font-bold tracking-tight text-white uppercase">
+          {greeting},{" "}
+          {isLoaded
+            ? user?.firstName?.toUpperCase() || "INVESTIGATOR"
+            : "INVESTIGATOR"}
+        </h1>
+        <p className="text-[11px] text-white/40 font-mono">
+          Here&apos;s what&apos;s happening across your investigations.
+        </p>
+      </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto space-y-6">
-        {/* Top Forensic Navigation Bar */}
-        <header className="border border-white/[0.12] bg-[#0c0d12]/90 backdrop-blur-md px-6 py-4 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-2.5 h-4 bg-emerald-400 animate-pulse" />
-            <span className="text-sm font-bold tracking-[0.25em] text-white uppercase">
-              INVESTIGATE // DASHBOARD
-            </span>
-          </div>
+      {/* Stat cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {statCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <div
+              key={card.label}
+              className="relative border border-white/[0.1] bg-[#0c0d12]/80 p-4 hover:border-white/20 transition-colors"
+            >
+              {/* corner marks */}
+              <div className="absolute -top-[1px] -left-[1px] w-2.5 h-2.5 border-t border-l border-white/40 pointer-events-none" />
+              <div className="absolute -bottom-[1px] -right-[1px] w-2.5 h-2.5 border-b border-r border-white/40 pointer-events-none" />
 
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-[#171924] border border-white/10 text-[11px] text-white/70">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>
-                OPERATOR:{" "}
-                <strong className="text-white font-semibold">
-                  {isLoaded ? user?.primaryEmailAddress?.emailAddress || user?.fullName || "AUTHORIZED" : "AUTHENTICATING..."}
-                </strong>
-              </span>
-            </div>
-
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "w-8 h-8 rounded-none border border-white/30",
-                  userButtonPopoverCard:
-                    "bg-[#11131a] border border-white/15 rounded-none font-mono text-white shadow-2xl",
-                },
-              }}
-            />
-          </div>
-        </header>
-
-        {/* Outer Dashboard Terminal Box */}
-        <div className="relative border border-white/[0.14] bg-[#0c0d12]/80 backdrop-blur-md p-6 sm:p-8 transition-all duration-300">
-          {/* Corner Tick Markings */}
-          <div className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-white/60 pointer-events-none" />
-          <div className="absolute -top-[1px] -right-[1px] w-3 h-3 border-t-2 border-r-2 border-white/60 pointer-events-none" />
-          <div className="absolute -bottom-[1px] -left-[1px] w-3 h-3 border-b-2 border-l-2 border-white/60 pointer-events-none" />
-          <div className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-white/60 pointer-events-none" />
-
-          {/* Heading */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-white/[0.08] gap-4 mb-6">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                CRIMINAL NETWORK INTELLIGENCE FEED
-              </h1>
-              <p className="text-xs text-white/50 font-sans mt-1">
-                Real-time node telemetry, multi-hop relationship graphs, and entity forensics.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 px-3 py-1.5 self-start">
-              <Activity className="w-3.5 h-3.5 animate-pulse" />
-              <span>LIVE RECON ACTIVE</span>
-            </div>
-          </div>
-
-          {/* Metric Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="bg-[#11131a]/90 border border-white/10 p-4 relative overflow-hidden">
-              <div className="flex items-center justify-between text-white/40 mb-2">
-                <span className="text-[10px] tracking-widest uppercase">TRACKED ENTITIES</span>
-                <Users className="w-4 h-4 text-white/60" />
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[9px] font-mono tracking-widest text-white/40 uppercase">
+                  {card.label}
+                </span>
+                <Icon className="w-3.5 h-3.5 text-white/30" />
               </div>
-              <div className="text-2xl font-bold text-white">1,482</div>
-              <div className="text-[10px] text-emerald-400 mt-1">+14 identified today</div>
-            </div>
-
-            <div className="bg-[#11131a]/90 border border-white/10 p-4 relative overflow-hidden">
-              <div className="flex items-center justify-between text-white/40 mb-2">
-                <span className="text-[10px] tracking-widest uppercase">NODE CLUSTERS</span>
-                <Network className="w-4 h-4 text-white/60" />
+              <div className="text-2xl font-bold text-white tabular-nums">
+                {card.value}
               </div>
-              <div className="text-2xl font-bold text-white">384</div>
-              <div className="text-[10px] text-cyan-400 mt-1">7 cross-border rings</div>
-            </div>
-
-            <div className="bg-[#11131a]/90 border border-white/10 p-4 relative overflow-hidden">
-              <div className="flex items-center justify-between text-white/40 mb-2">
-                <span className="text-[10px] tracking-widest uppercase">HIGH-RISK ALERTS</span>
-                <ShieldAlert className="w-4 h-4 text-amber-400" />
-              </div>
-              <div className="text-2xl font-bold text-amber-300">29</div>
-              <div className="text-[10px] text-amber-400/80 mt-1">Immediate action required</div>
-            </div>
-
-            <div className="bg-[#11131a]/90 border border-white/10 p-4 relative overflow-hidden">
-              <div className="flex items-center justify-between text-white/40 mb-2">
-                <span className="text-[10px] tracking-widest uppercase">DATA SOURCES</span>
-                <Database className="w-4 h-4 text-white/60" />
-              </div>
-              <div className="text-2xl font-bold text-white">18</div>
-              <div className="text-[10px] text-white/50 mt-1">Sync latency: 42ms</div>
-            </div>
-          </div>
-
-          {/* Graph Placeholder & Terminal Feed */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8 bg-[#0a0b10] border border-white/[0.08] p-6 min-h-[320px] flex flex-col justify-between">
-              <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 text-xs text-white/60">
-                <div className="flex items-center gap-2">
-                  <Terminal className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>ENTITY GRAPH VISUALIZER</span>
-                </div>
-                <span className="text-[10px] text-white/30">3D FORCE ENGINE</span>
-              </div>
-
-              <div className="my-auto py-12 text-center space-y-3">
-                <div className="inline-flex p-3 bg-white/5 border border-white/10">
-                  <Network className="w-8 h-8 text-white/70 animate-pulse" />
-                </div>
-                <div className="text-sm font-semibold text-white">
-                  GRAPH TOPOLOGY READY
-                </div>
-                <p className="text-xs text-white/40 max-w-md mx-auto font-sans">
-                  Entity relationship canvas initialized for operator investigation. Ready to load case files and surveillance records.
-                </p>
-              </div>
-
-              <div className="text-[10px] text-white/30 border-t border-white/[0.06] pt-3 flex justify-between">
-                <span>CANVAS STATUS: MOUNTED</span>
-                <span>GPU ACCELERATION: ACTIVE</span>
+              <div
+                className={`flex items-center gap-1 mt-1.5 text-[10px] font-mono ${
+                  card.deltaUp === true
+                    ? "text-emerald-400"
+                    : card.deltaUp === false
+                    ? "text-red-400"
+                    : "text-white/40"
+                }`}
+              >
+                {card.deltaUp === true && <ArrowUpRight className="w-3 h-3" />}
+                {card.deltaUp === false && (
+                  <ArrowDownRight className="w-3 h-3" />
+                )}
+                {card.delta}
               </div>
             </div>
+          );
+        })}
+      </div>
 
-            <div className="lg:col-span-4 bg-[#0a0b10] border border-white/[0.08] p-6 space-y-4">
-              <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 text-xs text-white/60">
-                <span>RECENT LOGS</span>
-                <span className="text-emerald-400 text-[10px]">STREAMING</span>
-              </div>
+      {/* Two-column: Active Investigations + Priority Alerts */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Active Investigations */}
+        <div className="lg:col-span-7">
+          <TerminalCard
+            title="ACTIVE INVESTIGATIONS"
+            statusLabel="LIVE"
+            statusColor="emerald"
+          >
+            <div className="space-y-3">
+              {activeCases.map((c) => (
+                <Link href="/dashboard/cases" key={c.id}>
+                  <div className="group border border-white/[0.07] bg-[#0a0b10] p-3.5 hover:border-white/20 hover:bg-white/[0.02] transition-all cursor-pointer">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-mono text-white/40">
+                            {c.id}
+                          </span>
+                          <span
+                            className={`text-[9px] font-mono border px-1.5 py-px ${priorityColors[c.priority]}`}
+                          >
+                            {c.priority}
+                          </span>
+                        </div>
+                        <div className="text-[13px] font-semibold text-white group-hover:text-white/90">
+                          {c.name}
+                        </div>
+                        <div className="text-[10px] text-white/40 mt-1 font-mono">
+                          {c.entities} entities · updated {c.updated}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[9px] font-mono text-emerald-400/80 border border-emerald-500/20 bg-emerald-950/30 px-2 py-0.5 shrink-0 mt-0.5">
+                        <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+                        {c.status}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
 
-              <div className="space-y-3 text-[11px] font-mono text-white/70">
-                <div className="p-2 bg-white/[0.02] border-l-2 border-emerald-400">
-                  <div className="text-white/40 text-[9px]">12:44:02 UTC</div>
-                  <div>OAuth credentials verified via Google provider.</div>
-                </div>
-                <div className="p-2 bg-white/[0.02] border-l-2 border-cyan-400">
-                  <div className="text-white/40 text-[9px]">12:44:03 UTC</div>
-                  <div>Session token minted with biometric clearance.</div>
-                </div>
-                <div className="p-2 bg-white/[0.02] border-l-2 border-amber-400">
-                  <div className="text-white/40 text-[9px]">12:44:05 UTC</div>
-                  <div>Connecting to criminal node surveillance feed...</div>
-                </div>
-              </div>
+              <Link
+                href="/dashboard/cases"
+                className="block text-center text-[10px] font-mono text-white/30 hover:text-white/60 py-2 border border-white/[0.05] hover:border-white/10 transition-colors"
+              >
+                VIEW ALL CASES →
+              </Link>
             </div>
-          </div>
+          </TerminalCard>
+        </div>
+
+        {/* Priority Alerts */}
+        <div className="lg:col-span-5">
+          <TerminalCard
+            title="PRIORITY ALERTS"
+            statusLabel="17 UNREAD"
+            statusColor="amber"
+          >
+            <div className="space-y-2">
+              {priorityAlerts.map((alert, i) => {
+                const Icon = alert.icon;
+                return (
+                  <div
+                    key={i}
+                    className="flex items-start gap-3 p-2.5 border border-white/[0.05] hover:border-white/10 hover:bg-white/[0.02] transition-all cursor-pointer group"
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full mt-1 shrink-0 ${alert.color}`}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[11px] text-white/80 group-hover:text-white leading-snug">
+                        {alert.label}
+                      </div>
+                      <div className="text-[10px] text-white/30 font-mono mt-0.5">
+                        {alert.time}
+                      </div>
+                    </div>
+                    <Icon className="w-3 h-3 text-white/20 group-hover:text-white/40 shrink-0 mt-0.5" />
+                  </div>
+                );
+              })}
+
+              <Link
+                href="/dashboard/alerts"
+                className="block text-center text-[10px] font-mono text-white/30 hover:text-white/60 py-2 border border-white/[0.05] hover:border-white/10 transition-colors mt-2"
+              >
+                VIEW ALL ALERTS →
+              </Link>
+            </div>
+          </TerminalCard>
         </div>
       </div>
-    </main>
+
+      {/* Network Activity */}
+      <TerminalCard
+        title="NETWORK ACTIVITY"
+        statusLabel="STREAMING"
+        statusColor="cyan"
+      >
+        <div className="space-y-2">
+          {/* Simulated activity timeline bars */}
+          {[
+            { time: "14:02", label: "CASE-0091 // 3 new edges detected in cluster B", color: "border-emerald-400" },
+            { time: "13:47", label: "CASE-0092 // Financial node linked to offshore account", color: "border-amber-400" },
+            { time: "13:21", label: "CASE-0088 // Supply route node updated – 2 new contacts", color: "border-amber-400" },
+            { time: "12:58", label: "SYSTEM // Cross-case entity match: E-1482 ↔ E-0774", color: "border-cyan-400" },
+            { time: "12:33", label: "CASE-0091 // High-risk entity flagged for manual review", color: "border-red-400" },
+          ].map((entry, i) => (
+            <div
+              key={i}
+              className={`flex items-start gap-3 p-2.5 border-l-2 ${entry.color} bg-white/[0.015] pl-3`}
+            >
+              <span className="text-[10px] font-mono text-white/30 shrink-0 tabular-nums w-11">
+                {entry.time}
+              </span>
+              <span className="text-[11px] font-mono text-white/60">
+                {entry.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </TerminalCard>
+
+      {/* Bottom status bar */}
+      <div className="flex items-center justify-between text-[9px] font-mono text-white/20 tracking-widest uppercase border-t border-white/[0.06] pt-3">
+        <span>SESSION ACTIVE // FORENSIC ENGINE v2.1.0</span>
+        <span>RESTRICTED ACCESS // AUTHORIZED PERSONNEL ONLY</span>
+      </div>
+    </div>
   );
 }
