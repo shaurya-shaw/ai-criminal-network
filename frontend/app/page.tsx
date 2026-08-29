@@ -4,7 +4,7 @@ import React from "react";
 import GridBackground from "./components/GridBackground";
 import EntityNodesWidget from "./components/EntityNodesWidget";
 import AuthCard from "./components/AuthCard";
-import { HyperText } from "@/frontend/components/ui/hyper-text";
+import { HyperText } from "@/components/ui/hyper-text";
 
 export default function LoginPage() {
   return (

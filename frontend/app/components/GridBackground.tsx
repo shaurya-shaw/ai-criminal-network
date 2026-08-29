@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { SparklesCore } from "@/frontend/components/ui/sparkles";
+import { SparklesCore } from "@/components/ui/sparkles";
 
 export default function GridBackground() {
   return (
