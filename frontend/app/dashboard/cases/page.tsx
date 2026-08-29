@@ -2,107 +2,16 @@
 
 import React, { useState } from "react";
 import { FolderOpen, Search, Calendar, Users, TrendingUp } from "lucide-react";
-import TerminalCard from "../components/TerminalCard";
 import Link from "next/link";
+import { caseSummaries } from "./data";
+import type { Priority, CaseStatus } from "./data";
 
-type Priority = "HIGH" | "MEDIUM" | "LOW";
-type Status = "ACTIVE" | "CLOSED" | "PENDING";
-
-interface Case {
-  id: string;
-  name: string;
-  status: Status;
-  priority: Priority;
-  entities: number;
-  networks: number;
-  investigator: string;
-  opened: string;
-  updated: string;
-  description: string;
-}
-
-const cases: Case[] = [
-  {
-    id: "CASE-0091",
-    name: "Operation Black Web",
-    status: "ACTIVE",
-    priority: "HIGH",
-    entities: 43,
-    networks: 5,
-    investigator: "AGENT SHARMA",
-    opened: "2026-07-14",
-    updated: "2h ago",
-    description:
-      "Deep web marketplace network linked to narcotics and weapon distribution across 4 states.",
-  },
-  {
-    id: "CASE-0092",
-    name: "Financial Investigation – Offshore",
-    status: "ACTIVE",
-    priority: "MEDIUM",
-    entities: 18,
-    networks: 2,
-    investigator: "AGENT KAPOOR",
-    opened: "2026-08-01",
-    updated: "5h ago",
-    description:
-      "Suspected money laundering via shell companies. Offshore accounts flagged in 3 jurisdictions.",
-  },
-  {
-    id: "CASE-0088",
-    name: "Narco Supply Route – Punjab",
-    status: "ACTIVE",
-    priority: "HIGH",
-    entities: 76,
-    networks: 8,
-    investigator: "AGENT MEHTA",
-    opened: "2026-06-20",
-    updated: "12h ago",
-    description:
-      "Cross-border narcotics supply chain spanning Pakistan border. 76 entities identified in transit network.",
-  },
-  {
-    id: "CASE-0083",
-    name: "Cybercrime Syndicate – Mumbai",
-    status: "PENDING",
-    priority: "MEDIUM",
-    entities: 29,
-    networks: 3,
-    investigator: "AGENT VERMA",
-    opened: "2026-05-10",
-    updated: "2 days ago",
-    description:
-      "Organized cybercrime group suspected of large-scale phishing and bank fraud operations.",
-  },
-  {
-    id: "CASE-0071",
-    name: "Human Trafficking – Network Alpha",
-    status: "CLOSED",
-    priority: "HIGH",
-    entities: 94,
-    networks: 11,
-    investigator: "AGENT SINGH",
-    opened: "2026-02-03",
-    updated: "30 days ago",
-    description:
-      "Dismantled trafficking network. 94 entities prosecuted. Case closed with 12 convictions.",
-  },
-  {
-    id: "CASE-0065",
-    name: "Counterfeit Currency Ring",
-    status: "CLOSED",
-    priority: "LOW",
-    entities: 12,
-    networks: 1,
-    investigator: "AGENT PATEL",
-    opened: "2026-01-18",
-    updated: "45 days ago",
-    description:
-      "Small-scale counterfeit operation. Case resolved, suspects in custody.",
-  },
+const statusFilters: (CaseStatus | "ALL")[] = [
+  "ALL",
+  "ACTIVE",
+  "PENDING",
+  "CLOSED",
 ];
-
-const statusFilters: (Status | "ALL")[] = ["ALL", "ACTIVE", "PENDING", "CLOSED"];
 
 const priorityColors: Record<Priority, string> = {
   HIGH: "text-red-400 border-red-500/30 bg-red-950/40",
@@ -110,17 +19,17 @@ const priorityColors: Record<Priority, string> = {
   LOW: "text-cyan-400 border-cyan-500/30 bg-cyan-950/40",
 };
 
-const statusColors: Record<Status, string> = {
+const statusColors: Record<CaseStatus, string> = {
   ACTIVE: "text-emerald-400 border-emerald-500/30 bg-emerald-950/30",
   PENDING: "text-amber-400 border-amber-500/30 bg-amber-950/30",
   CLOSED: "text-white/40 border-white/10 bg-white/5",
 };
 
 export default function CasesPage() {
-  const [filter, setFilter] = useState<Status | "ALL">("ALL");
+  const [filter, setFilter] = useState<CaseStatus | "ALL">("ALL");
   const [search, setSearch] = useState("");
 
-  const filtered = cases.filter((c) => {
+  const filtered = caseSummaries.filter((c) => {
     const matchesFilter = filter === "ALL" || c.status === filter;
     const matchesSearch =
       c.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -144,7 +53,8 @@ export default function CasesPage() {
             Case Files
           </h1>
           <p className="text-[11px] text-white/40 font-mono mt-0.5">
-            {cases.length} total cases · {cases.filter((c) => c.status === "ACTIVE").length} active
+            {caseSummaries.length} total cases ·{" "}
+            {caseSummaries.filter((c) => c.status === "ACTIVE").length} active
           </p>
         </div>
         <div className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 border border-emerald-500/30 bg-emerald-950/30 px-3 py-1.5 shrink-0">
@@ -195,64 +105,72 @@ export default function CasesPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {filtered.map((c) => (
-            <div
+            <Link
               key={c.id}
-              className="relative border border-white/[0.1] bg-[#0c0d12]/80 p-5 hover:border-white/20 transition-all group cursor-pointer"
+              href={`/dashboard/cases/${c.id}`}
+              className="block"
             >
-              {/* Corner marks */}
-              <div className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t border-l border-white/40 pointer-events-none" />
-              <div className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b border-r border-white/40 pointer-events-none" />
+              <div className="relative border border-white/[0.1] bg-[#0c0d12]/90 p-5 hover:border-white/25 hover:bg-[#0c0d12] transition-all group cursor-pointer h-full">
+                {/* Corner marks */}
+                <div className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t border-l border-white/40 pointer-events-none" />
+                <div className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b border-r border-white/40 pointer-events-none" />
 
-              {/* Header row */}
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-mono text-white/40">
-                      {c.id}
-                    </span>
-                    <span
-                      className={`text-[9px] font-mono border px-1.5 py-px ${priorityColors[c.priority]}`}
-                    >
-                      {c.priority}
-                    </span>
+                {/* Header row */}
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-mono text-white/40">
+                        {c.id}
+                      </span>
+                      <span
+                        className={`text-[9px] font-mono border px-1.5 py-px ${priorityColors[c.priority]}`}
+                      >
+                        {c.priority}
+                      </span>
+                    </div>
+                    <h2 className="text-[13px] font-semibold text-white group-hover:text-white/90 leading-snug">
+                      {c.name}
+                    </h2>
                   </div>
-                  <h2 className="text-[13px] font-semibold text-white group-hover:text-white/90 leading-snug">
-                    {c.name}
-                  </h2>
+                  <span
+                    className={`text-[9px] font-mono border px-2 py-0.5 shrink-0 ${statusColors[c.status]}`}
+                  >
+                    {c.status}
+                  </span>
                 </div>
-                <span
-                  className={`text-[9px] font-mono border px-2 py-0.5 shrink-0 ${statusColors[c.status]}`}
-                >
-                  {c.status}
-                </span>
-              </div>
 
-              {/* Description */}
-              <p className="text-[11px] text-white/40 font-mono leading-relaxed mb-4 line-clamp-2">
-                {c.description}
-              </p>
+                {/* Description */}
+                <p className="text-[11px] text-white/40 font-mono leading-relaxed mb-4 line-clamp-2">
+                  {c.description}
+                </p>
 
-              {/* Meta row */}
-              <div className="flex items-center gap-4 text-[10px] font-mono text-white/30 border-t border-white/[0.06] pt-3">
-                <span className="flex items-center gap-1.5">
-                  <Users className="w-3 h-3" />
-                  {c.entities} entities
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <TrendingUp className="w-3 h-3" />
-                  {c.networks} networks
-                </span>
-                <span className="flex items-center gap-1.5 ml-auto">
-                  <Calendar className="w-3 h-3" />
-                  {c.updated}
-                </span>
-              </div>
+                {/* Meta row */}
+                <div className="flex items-center gap-4 text-[10px] font-mono text-white/30 border-t border-white/[0.06] pt-3">
+                  <span className="flex items-center gap-1.5">
+                    <Users className="w-3 h-3" />
+                    {c.entities} entities
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <TrendingUp className="w-3 h-3" />
+                    {c.networks} networks
+                  </span>
+                  <span className="flex items-center gap-1.5 ml-auto">
+                    <Calendar className="w-3 h-3" />
+                    {c.updated}
+                  </span>
+                </div>
 
-              {/* Investigator */}
-              <div className="mt-2 text-[10px] font-mono text-white/25">
-                LEAD: {c.investigator}
+                {/* Investigator + open hint */}
+                <div className="flex items-center justify-between mt-2">
+                  <div className="text-[10px] font-mono text-white/25">
+                    LEAD: {c.investigator}
+                  </div>
+                  <div className="text-[9px] font-mono text-white/20 group-hover:text-white/50 transition-colors">
+                    VIEW CASE →
+                  </div>
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
