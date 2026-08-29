@@ -1,14 +1,14 @@
 "use client";
 
 import React from "react";
-import { SparklesCore } from "@/components/ui/sparkles";
+import { SparklesCore } from "@/frontend/components/ui/sparkles";
 
 export default function GridBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
       {/* Base Grid */}
       <div className="absolute inset-0 forensic-grid opacity-90" />
-      
+
       {/* Dense Micro Grid */}
       <div className="absolute inset-0 forensic-grid-dense opacity-55" />
 
@@ -30,20 +30,25 @@ export default function GridBackground() {
       <div className="absolute inset-0 bg-noise opacity-20 mix-blend-overlay" />
 
       {/* Minimal Ambient Glow behind hero & sign-in */}
-      <div 
+      <div
         className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-[550px] h-[550px] rounded-full blur-[140px] opacity-[0.05] pointer-events-none"
-        style={{ background: "radial-gradient(circle, #ffffff 0%, transparent 70%)" }}
+        style={{
+          background: "radial-gradient(circle, #ffffff 0%, transparent 70%)",
+        }}
       />
-      <div 
+      <div
         className="absolute top-1/2 right-1/4 -translate-y-1/2 translate-x-1/2 w-[450px] h-[450px] rounded-full blur-[120px] opacity-[0.06] pointer-events-none"
-        style={{ background: "radial-gradient(circle, #a3b8cc 0%, transparent 70%)" }}
+        style={{
+          background: "radial-gradient(circle, #a3b8cc 0%, transparent 70%)",
+        }}
       />
 
       {/* Dark Vignette Overlay with Open Translucent Center */}
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at center, transparent 45%, rgba(9,10,13,0.85) 100%)"
+          background:
+            "radial-gradient(ellipse at center, transparent 45%, rgba(9,10,13,0.85) 100%)",
         }}
       />
 

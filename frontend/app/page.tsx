@@ -4,7 +4,7 @@ import React from "react";
 import GridBackground from "./components/GridBackground";
 import EntityNodesWidget from "./components/EntityNodesWidget";
 import AuthCard from "./components/AuthCard";
-import { HyperText } from "@/components/ui/hyper-text";
+import { HyperText } from "@/frontend/components/ui/hyper-text";
 
 export default function LoginPage() {
   return (
@@ -46,9 +46,9 @@ export default function LoginPage() {
               </h1>
 
               <p className="text-sm sm:text-base text-white/60 font-mono max-w-lg leading-relaxed pt-2">
-                Fuse FIRs, call records, financial data, and surveillance
-                reports into one relationship graph — and see the network your
-                suspects don&apos;t know you can see.
+                Fuse fragmented intelligence into a single relationship
+                graph—connecting FIRs, communications, financial activity, and
+                surveillance to reveal what individual records cannot.
               </p>
             </div>
 
