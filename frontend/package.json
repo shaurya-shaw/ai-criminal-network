@@ -11,6 +11,7 @@
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@clerk/nextjs": "^7.8.2",
+    "@google/genai": "^2.19.0",
     "@supabase/supabase-js": "^2.112.4",
     "@tsparticles/engine": "^4.3.2",
     "@tsparticles/react": "^4.3.2",
