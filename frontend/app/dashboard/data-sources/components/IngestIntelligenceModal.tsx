@@ -34,12 +34,13 @@ interface IngestIntelligenceModalProps {
 
 const SOURCE_TYPES = [
   { value: "FIR", label: "FIR / Investigative Report", icon: "📑" },
-  { value: "CDRS", label: "CDRS / Telecommunications Feed", icon: "📞" },
-  { value: "FINANCIAL_RECORD", label: "Financial / Banking Statement", icon: "💳" },
-  { value: "SURVEILLANCE_REPORT", label: "Surveillance / CCTV Index", icon: "👁️" },
+  { value: "CDR", label: "CDR / Telecommunications Feed", icon: "📞" },
+  { value: "FINANCIAL", label: "Financial / Banking Statement", icon: "💳" },
+  { value: "SURVEILLANCE", label: "Surveillance / CCTV Index", icon: "👁️" },
+  { value: "REPORT", label: "Field & Intelligence Report", icon: "📋" },
   { value: "OSINT", label: "OSINT / Social Media Harvest", icon: "🌐" },
-  { value: "CUSTOMS_RECORD", label: "Customs & Border Record", icon: "🛂" },
-  { value: "OTHER", label: "Other Intelligence Material", icon: "📁" },
+  { value: "CUSTOMS", label: "Customs & Border Record", icon: "🛂" },
+  { value: "OTHER", label: "Other Investigation Material", icon: "📁" },
 ];
 
 export default function IngestIntelligenceModal({
@@ -203,12 +204,14 @@ export default function IngestIntelligenceModal({
       setUploadProgress(100);
       setUploadStep("INGESTION COMPLETE · EVIDENCE LOGGED");
 
+      const src = data.source || data.file;
       const result = {
-        caseId: data.case.id,
-        caseName: data.case.name,
-        fileName: data.file.name,
-        storagePath: data.file.storagePath,
-        size: data.file.size,
+        id: src.id || "SRC-NEW",
+        caseId: src.caseId || (data.case && data.case.id) || selectedCaseId,
+        caseName: (data.case && data.case.name) || selectedCaseId,
+        fileName: src.filename || src.name || file.name,
+        storagePath: src.storagePath,
+        size: src.fileSize || src.size || file.size,
       };
 
       setUploadResult(result);
@@ -578,7 +581,7 @@ export default function IngestIntelligenceModal({
                 ) : (
                   <>
                     <Shield className="w-3 h-3" />
-                    INGEST INTELLIGENCE
+                    INGEST DATA
                   </>
                 )}
               </button>
