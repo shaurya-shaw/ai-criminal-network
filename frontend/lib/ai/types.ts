@@ -1,4 +1,5 @@
 // ─── Document Intelligence Extraction Types ─────────────────────────────────
+// Schema designed for reliable Neo4j graph ingestion.
 
 export type EntityType =
   | "Person"
@@ -21,39 +22,44 @@ export type RelationshipType =
   | "OCCURRED_AT";
 
 export interface ExtractedEntity {
-  id: string;
+  id: string;       // Stable ID: "ENT-1", "ENT-2", etc.
   name: string;
   type: EntityType;
   role?: string;
   aliases?: string[];
   riskScore?: number;
   attributes?: Record<string, string>;
-  confidence: number;
+  confidence: number; // 0-100
 }
 
 export interface ExtractedRelationship {
-  source: string;
-  target: string;
+  source: string;          // Entity ID (e.g. "ENT-1") — MUST exist in entities[]
+  target: string;          // Entity ID (e.g. "ENT-2") — MUST exist in entities[]
+  sourceName?: string;     // Resolved entity name for UI display
+  targetName?: string;     // Resolved entity name for UI display
   type: RelationshipType;
   description: string;
-  confidence: number;
+  confidence: number;      // 0-100
   metadata?: Record<string, string | number>;
+  evidenceReferences?: string[]; // Evidence IDs (e.g. "EVID-1") — MUST exist in evidenceReferences[]
 }
 
 export interface ExtractedEvent {
+  id: string;              // Stable ID: "EVT-1", "EVT-2", etc.
   title: string;
   type: string;
   timestamp?: string;
   description: string;
   location?: string;
-  entitiesInvolved?: string[];
+  entitiesInvolved?: string[];  // Entity IDs — MUST exist in entities[]
 }
 
 export interface ExtractedEvidenceRef {
-  excerpt: string;
+  id: string;              // Stable ID: "EVID-1", "EVID-2", etc.
+  excerpt: string;         // Verbatim text from document — MUST NOT be empty
   pageOrSection?: string;
   relevance: string;
-  entitiesReferenced?: string[];
+  entitiesReferenced?: string[]; // Entity IDs — MUST exist in entities[]
 }
 
 export interface IntelligenceExtractionResult {

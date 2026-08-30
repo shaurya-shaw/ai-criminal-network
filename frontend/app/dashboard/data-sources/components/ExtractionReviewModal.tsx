@@ -4,22 +4,17 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   X,
-  FileText,
   CheckCircle2,
-  AlertTriangle,
   RefreshCw,
   Users,
   GitBranch,
   Calendar,
   Quote,
   Code,
-  Shield,
-  Download,
   ExternalLink,
   ThumbsUp,
   ThumbsDown,
   Sparkles,
-  ArrowRight,
 } from "lucide-react";
 import { DataSourceItem } from "../page";
 import {
@@ -429,14 +424,14 @@ export default function ExtractionReviewModal({
                   >
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-white bg-black/40 px-2 py-0.5 border border-white/15">
-                        {rel.source}
+                        {rel.sourceName || rel.source}
                       </span>
                       <div className="flex items-center gap-1 text-[9px] px-2 py-0.5 bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-bold uppercase">
                         <span>➔</span>
                         <span>{rel.type}</span>
                       </div>
                       <span className="font-bold text-white bg-black/40 px-2 py-0.5 border border-white/15">
-                        {rel.target}
+                        {rel.targetName || rel.target}
                       </span>
                     </div>
 

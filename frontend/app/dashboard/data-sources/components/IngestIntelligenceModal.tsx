@@ -54,7 +54,9 @@ export default function IngestIntelligenceModal({
   const [selectedCaseId, setSelectedCaseId] = useState<string>("");
   const [isCreatingNewCase, setIsCreatingNewCase] = useState(false);
   const [newCaseName, setNewCaseName] = useState("");
-  const [newCasePriority, setNewCasePriority] = useState<"HIGH" | "MEDIUM" | "LOW">("HIGH");
+  const [newCasePriority, setNewCasePriority] = useState<
+    "HIGH" | "MEDIUM" | "LOW"
+  >("HIGH");
   const [newCaseJurisdiction, setNewCaseJurisdiction] = useState("NATIONAL");
   const [title, setTitle] = useState("");
   const [notes, setNotes] = useState("");
@@ -92,8 +94,16 @@ export default function IngestIntelligenceModal({
         // Fallback default list
         const fallback = [
           { id: "CASE-0091", name: "Operation Black Web", priority: "HIGH" },
-          { id: "CASE-0092", name: "Financial Investigation – Offshore", priority: "MEDIUM" },
-          { id: "CASE-0088", name: "Narco Supply Route – Punjab", priority: "HIGH" },
+          {
+            id: "CASE-0092",
+            name: "Financial Investigation – Offshore",
+            priority: "MEDIUM",
+          },
+          {
+            id: "CASE-0088",
+            name: "Narco Supply Route – Punjab",
+            priority: "HIGH",
+          },
         ];
         setCases(fallback);
         setSelectedCaseId(fallback[0].id);
@@ -130,17 +140,20 @@ export default function IngestIntelligenceModal({
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const droppedFile = e.dataTransfer.files[0];
-      setFile(droppedFile);
-      if (!title) {
-        setTitle(droppedFile.name.replace(/\.[^/.]+$/, ""));
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        const droppedFile = e.dataTransfer.files[0];
+        setFile(droppedFile);
+        if (!title) {
+          setTitle(droppedFile.name.replace(/\.[^/.]+$/, ""));
+        }
       }
-    }
-  }, [title]);
+    },
+    [title],
+  );
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -203,6 +216,7 @@ export default function IngestIntelligenceModal({
 
       setUploadProgress(100);
       setUploadStep("INGESTION COMPLETE · EVIDENCE LOGGED");
+      setIsUploading(false);
 
       const src = data.source || data.file;
       const result = {
@@ -226,7 +240,9 @@ export default function IngestIntelligenceModal({
         });
       }
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Failed to upload file");
+      setErrorMessage(
+        err instanceof Error ? err.message : "Failed to upload file",
+      );
       setIsUploading(false);
       setUploadProgress(0);
     }
@@ -246,10 +262,10 @@ export default function IngestIntelligenceModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 font-mono">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity cursor-pointer"
         onClick={() => !isUploading && onClose()}
       />
 
@@ -262,7 +278,7 @@ export default function IngestIntelligenceModal({
         <div className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-emerald-400 pointer-events-none" />
 
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.08] bg-white/[0.02]">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.08] bg-white/[0.02] shrink-0">
           <div className="flex items-center gap-2.5">
             <Database className="w-4 h-4 text-emerald-400" />
             <div>
@@ -275,9 +291,11 @@ export default function IngestIntelligenceModal({
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
             disabled={isUploading}
-            className="p-1 text-white/40 hover:text-white hover:bg-white/[0.05] transition-colors disabled:opacity-30"
+            className="p-1.5 text-white hover:text-white hover:bg-white/[0.08] transition-colors disabled:opacity-30 cursor-pointer"
+            title="Close modal"
           >
             <X className="w-4 h-4" />
           </button>
@@ -296,22 +314,34 @@ export default function IngestIntelligenceModal({
                   INTELLIGENCE STORED SECURELY
                 </h3>
                 <p className="text-[11px] text-white/50">
-                  File successfully verified, encrypted, and written to Supabase Storage.
+                  File successfully verified, encrypted, and written to Supabase
+                  Storage.
                 </p>
               </div>
 
               {/* Receipt / Metadata Box */}
               <div className="border border-white/[0.08] bg-white/[0.02] p-4 text-left space-y-2.5 text-[11px]">
                 <div className="flex justify-between border-b border-white/[0.06] pb-1.5">
-                  <span className="text-white/35 text-[9px] uppercase tracking-widest">TARGET CASE</span>
-                  <span className="text-emerald-400 font-semibold">{uploadResult.caseId} // {uploadResult.caseName}</span>
+                  <span className="text-white/35 text-[9px] uppercase tracking-widest">
+                    TARGET CASE
+                  </span>
+                  <span className="text-emerald-400 font-semibold">
+                    {uploadResult.caseId} // {uploadResult.caseName}
+                  </span>
                 </div>
                 <div className="flex justify-between border-b border-white/[0.06] pb-1.5">
-                  <span className="text-white/35 text-[9px] uppercase tracking-widest">FILE NAME</span>
-                  <span className="text-white/80">{uploadResult.fileName} ({(uploadResult.size / 1024).toFixed(1)} KB)</span>
+                  <span className="text-white/35 text-[9px] uppercase tracking-widest">
+                    FILE NAME
+                  </span>
+                  <span className="text-white/80">
+                    {uploadResult.fileName} (
+                    {(uploadResult.size / 1024).toFixed(1)} KB)
+                  </span>
                 </div>
                 <div className="space-y-1 pt-1">
-                  <span className="text-white/35 text-[9px] uppercase tracking-widest block">STORAGE VAULT PATH</span>
+                  <span className="text-white/35 text-[9px] uppercase tracking-widest block">
+                    STORAGE VAULT PATH
+                  </span>
                   <code className="text-[10px] text-cyan-400/90 break-all bg-black/40 p-2 block border border-cyan-500/20">
                     {uploadResult.storagePath}
                   </code>
@@ -341,7 +371,9 @@ export default function IngestIntelligenceModal({
             /* ── UPLOAD FORM ── */
             <>
               <p className="text-[11px] text-white/50 leading-relaxed">
-                Upload FIRs, CDRs, financial records, surveillance reports, and other investigation material directly into the secure cloud repository.
+                Upload FIRs, CDRs, financial records, surveillance reports, and
+                other investigation material directly into the secure cloud
+                repository.
               </p>
 
               {/* Dropzone */}
@@ -354,8 +386,8 @@ export default function IngestIntelligenceModal({
                   isDragging
                     ? "border-emerald-400 bg-emerald-950/20"
                     : file
-                    ? "border-white/30 bg-white/[0.03]"
-                    : "border-white/15 bg-white/[0.01] hover:border-white/30 hover:bg-white/[0.02]"
+                      ? "border-white/30 bg-white/[0.03]"
+                      : "border-white/15 bg-white/[0.01] hover:border-white/30 hover:bg-white/[0.02]"
                 }`}
               >
                 <input
@@ -414,7 +446,11 @@ export default function IngestIntelligenceModal({
                     className="w-full bg-[#0a0b0e] border border-white/[0.12] px-3 py-2 text-[11px] text-white font-mono focus:border-emerald-400 focus:outline-none"
                   >
                     {SOURCE_TYPES.map((t) => (
-                      <option key={t.value} value={t.value} className="bg-[#0c0d12] text-white">
+                      <option
+                        key={t.value}
+                        value={t.value}
+                        className="bg-[#0c0d12] text-white"
+                      >
                         {t.icon} {t.label}
                       </option>
                     ))}
@@ -432,7 +468,9 @@ export default function IngestIntelligenceModal({
                       onClick={() => setIsCreatingNewCase(!isCreatingNewCase)}
                       className="text-[9px] text-emerald-400 hover:underline tracking-widest uppercase flex items-center gap-1"
                     >
-                      {isCreatingNewCase ? "← SELECT EXISTING" : "+ CREATE NEW CASE"}
+                      {isCreatingNewCase
+                        ? "← SELECT EXISTING"
+                        : "+ CREATE NEW CASE"}
                     </button>
                   </div>
 
@@ -444,7 +482,11 @@ export default function IngestIntelligenceModal({
                       className="w-full bg-[#0a0b0e] border border-white/[0.12] px-3 py-2 text-[11px] text-white font-mono focus:border-emerald-400 focus:outline-none"
                     >
                       {cases.map((c) => (
-                        <option key={c.id} value={c.id} className="bg-[#0c0d12] text-white">
+                        <option
+                          key={c.id}
+                          value={c.id}
+                          className="bg-[#0c0d12] text-white"
+                        >
                           {c.id} — {c.name}
                         </option>
                       ))}
@@ -471,7 +513,11 @@ export default function IngestIntelligenceModal({
                     </label>
                     <select
                       value={newCasePriority}
-                      onChange={(e) => setNewCasePriority(e.target.value as "HIGH" | "MEDIUM" | "LOW")}
+                      onChange={(e) =>
+                        setNewCasePriority(
+                          e.target.value as "HIGH" | "MEDIUM" | "LOW",
+                        )
+                      }
                       className="w-full bg-[#0a0b0e] border border-white/[0.12] px-2 py-1.5 text-[10px] text-white font-mono focus:outline-none"
                     >
                       <option value="HIGH">HIGH PRIORITY</option>
@@ -537,7 +583,9 @@ export default function IngestIntelligenceModal({
               {isUploading && (
                 <div className="space-y-2 border border-cyan-500/30 bg-cyan-950/20 p-3.5">
                   <div className="flex justify-between text-[10px] text-cyan-400">
-                    <span className="tracking-widest uppercase">{uploadStep}</span>
+                    <span className="tracking-widest uppercase">
+                      {uploadStep}
+                    </span>
                     <span className="font-bold">{uploadProgress}%</span>
                   </div>
                   <div className="w-full h-1 bg-white/10 overflow-hidden">
