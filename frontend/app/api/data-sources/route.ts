@@ -1,17 +1,26 @@
-import { NextResponse } from "next/server";
-import { listAllIntelligenceFiles } from "@/lib/supabase/server";
+import { NextRequest, NextResponse } from "next/server";
+import { fetchDataSources } from "@/lib/supabase/server";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { files, totalBytes, error } = await listAllIntelligenceFiles();
+    const { searchParams } = new URL(request.url);
+    const caseId = searchParams.get("caseId") || undefined;
+    const sourceType = searchParams.get("sourceType") || undefined;
+    const status = searchParams.get("status") || undefined;
 
-    if (error) {
+    const result = await fetchDataSources({
+      caseId,
+      sourceType,
+      status,
+    });
+
+    if (!result.success) {
       return NextResponse.json(
         {
           success: false,
-          error: "Failed to list files from Supabase Storage",
-          details: error,
-          files: [],
+          error: "Failed to retrieve data sources from database",
+          details: result.error,
+          sources: [],
           total: 0,
         },
         { status: 500 }
@@ -21,9 +30,8 @@ export async function GET() {
     return NextResponse.json(
       {
         success: true,
-        files: files || [],
-        total: files?.length || 0,
-        totalBytes: totalBytes || 0,
+        sources: result.sources || [],
+        total: result.total || 0,
       },
       { status: 200 }
     );
@@ -33,7 +41,7 @@ export async function GET() {
         success: false,
         error: "Internal error retrieving data sources",
         details: error instanceof Error ? error.message : String(error),
-        files: [],
+        sources: [],
         total: 0,
       },
       { status: 500 }
