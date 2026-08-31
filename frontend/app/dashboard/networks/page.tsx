@@ -1,231 +1,211 @@
 "use client";
 
-import React, { useState } from "react";
-import { Network, Cpu, Globe, ArrowUpRight, Users, Link2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Cpu, Link2, Maximize2, Minimize2, Network, RefreshCw, ShieldAlert, Users } from "lucide-react";
 import TerminalCard from "../components/TerminalCard";
+import InvestigationGraph from "../components/InvestigationGraph";
+import type { CaseSummary } from "@/lib/api/types";
+import type { InvestigationGraphData } from "@/lib/neo4j/types";
 
-type RiskLevel = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
-
-interface NetworkEntry {
-  id: string;
-  name: string;
-  nodes: number;
-  edges: number;
-  risk: RiskLevel;
-  crossBorder: boolean;
-  regions: string[];
-  caseId: string;
-  lastActivity: string;
-}
-
-const networks: NetworkEntry[] = [
-  {
-    id: "NET-001",
-    name: "Black Web Supply Ring",
-    nodes: 43,
-    edges: 118,
-    risk: "CRITICAL",
-    crossBorder: true,
-    regions: ["MH", "DL", "PB", "RJ"],
-    caseId: "CASE-0091",
-    lastActivity: "14 min ago",
-  },
-  {
-    id: "NET-002",
-    name: "Offshore Finance Cluster",
-    nodes: 18,
-    edges: 41,
-    risk: "HIGH",
-    crossBorder: true,
-    regions: ["MH", "GJ"],
-    caseId: "CASE-0092",
-    lastActivity: "2h ago",
-  },
-  {
-    id: "NET-003",
-    name: "Punjab Transit Corridor",
-    nodes: 76,
-    edges: 203,
-    risk: "CRITICAL",
-    crossBorder: true,
-    regions: ["PB", "HR", "UP"],
-    caseId: "CASE-0088",
-    lastActivity: "12h ago",
-  },
-  {
-    id: "NET-004",
-    name: "Mumbai Cyber Syndicate",
-    nodes: 29,
-    edges: 67,
-    risk: "MEDIUM",
-    crossBorder: false,
-    regions: ["MH"],
-    caseId: "CASE-0083",
-    lastActivity: "2 days ago",
-  },
-];
-
-const riskColors: Record<RiskLevel, string> = {
-  CRITICAL: "text-red-400 border-red-500/30 bg-red-950/40",
-  HIGH: "text-amber-400 border-amber-500/30 bg-amber-950/40",
-  MEDIUM: "text-cyan-400 border-cyan-500/30 bg-cyan-950/40",
-  LOW: "text-white/40 border-white/10 bg-white/5",
-};
-
-const riskDotColors: Record<RiskLevel, string> = {
-  CRITICAL: "bg-red-400",
-  HIGH: "bg-amber-400",
-  MEDIUM: "bg-cyan-400",
-  LOW: "bg-white/40",
+const priorityStyles: Record<string, string> = {
+  HIGH: "border-red-500/30 bg-red-950/40 text-red-300",
+  MEDIUM: "border-amber-500/30 bg-amber-950/40 text-amber-300",
+  LOW: "border-cyan-500/30 bg-cyan-950/40 text-cyan-300",
 };
 
 export default function NetworksPage() {
-  const [selectedNetwork, setSelectedNetwork] = useState<string | null>("NET-001");
+  const [cases, setCases] = useState<CaseSummary[]>([]);
+  const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
+  const [caseError, setCaseError] = useState<string | null>(null);
+  const [loadingCases, setLoadingCases] = useState(true);
+  const [graphCounts, setGraphCounts] = useState({ nodes: 0, edges: 0 });
+  const [isMaximized, setIsMaximized] = useState(false);
 
-  const selected = networks.find((n) => n.id === selectedNetwork);
+  const loadCases = useCallback(async () => {
+    setLoadingCases(true);
+    setCaseError(null);
+    try {
+      const response = await fetch("/api/cases", { cache: "no-store" });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Unable to load cases.");
+      const nextCases = Array.isArray(payload.cases) ? payload.cases : [];
+      setCases(nextCases);
+      setSelectedCaseId((current) => current && nextCases.some((item: CaseSummary) => item.id === current) ? current : nextCases[0]?.id || null);
+    } catch (error) {
+      setCaseError(error instanceof Error ? error.message : "Unable to load cases.");
+      setCases([]);
+      setSelectedCaseId(null);
+    } finally {
+      setLoadingCases(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadCases();
+  }, [loadCases]);
+
+  const onGraphChange = useCallback((graph: InvestigationGraphData) => {
+    setGraphCounts({ nodes: graph.nodes.length, edges: graph.edges.length });
+  }, []);
+  const selected = cases.find((item) => item.id === selectedCaseId) || null;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Page header */}
+    <div className="mx-auto max-w-7xl space-y-6">
+      {/* Page Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Network className="w-4 h-4 text-white/40" />
-            <span className="text-[10px] font-mono tracking-widest text-white/40 uppercase">
+          <div className="mb-1 flex items-center gap-2">
+            <Network className="h-4 w-4 text-white/40" />
+            <span className="text-[10px] font-mono uppercase tracking-widest text-white/40">
               Intelligence / Network Topology
             </span>
           </div>
-          <h1 className="text-base sm:text-lg font-bold tracking-tight text-white uppercase">
+          <h1 className="text-base font-bold uppercase tracking-tight text-white sm:text-lg">
             Network Topology
           </h1>
-          <p className="text-[11px] text-white/40 font-mono mt-0.5">
-            {networks.length} active networks ·{" "}
-            {networks.reduce((a, n) => a + n.nodes, 0)} total nodes ·{" "}
-            {networks.reduce((a, n) => a + n.edges, 0)} edges
+          <p className="mt-0.5 text-[11px] font-mono text-white/40">
+            {cases.length} active cases · {graphCounts.nodes} live nodes · {graphCounts.edges} live edges
           </p>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] font-mono text-cyan-400 border border-cyan-500/30 bg-cyan-950/30 px-3 py-1.5 shrink-0">
-          <Cpu className="w-3 h-3 animate-pulse" />
-          3D ENGINE READY
+
+        <div className="flex items-center gap-2">
+          {isMaximized && (
+            <button
+              onClick={() => setIsMaximized(false)}
+              className="flex items-center gap-1.5 border border-cyan-500/40 bg-cyan-950/40 px-3 py-1.5 text-[10px] font-mono font-bold text-cyan-300 hover:bg-cyan-900/50 transition-colors cursor-pointer"
+            >
+              <Minimize2 className="h-3.5 w-3.5" />
+              <span>SHOW CASES PANEL</span>
+            </button>
+          )}
+
+          <div className="flex shrink-0 items-center gap-1.5 border border-cyan-500/30 bg-cyan-950/30 px-3 py-1.5 text-[10px] font-mono text-cyan-400">
+            <Cpu className="h-3 w-3 animate-pulse" />
+            <span>NEO4J LIVE</span>
+          </div>
         </div>
       </div>
 
-      {/* Main layout: graph + network list */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Graph visualizer placeholder */}
-        <div className="lg:col-span-8">
+      {/* When Maximized: Sleek Case Switcher Bar */}
+      {isMaximized && cases.length > 1 && (
+        <div className="flex flex-wrap items-center gap-2 border border-white/10 bg-[#0c0d12]/90 p-2.5 backdrop-blur font-mono">
+          <span className="text-[9px] uppercase tracking-widest text-white/40 pl-1">SELECT CASE:</span>
+          {cases.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => {
+                setSelectedCaseId(c.id);
+                setGraphCounts({ nodes: 0, edges: 0 });
+              }}
+              className={`px-2.5 py-1 text-[10px] border transition-all cursor-pointer ${
+                selectedCaseId === c.id
+                  ? "border-cyan-400 bg-cyan-950/70 text-cyan-200 font-bold"
+                  : "border-white/10 bg-white/[0.02] text-white/60 hover:border-white/20 hover:text-white"
+              }`}
+            >
+              <span className="text-white/40 mr-1.5">{c.id}</span>
+              <span>{c.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Main Layout */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        {/* Graph Visualizer: Expands to full 12 cols when maximized */}
+        <div className={isMaximized ? "lg:col-span-12" : "lg:col-span-8"}>
           <TerminalCard
             title={selected ? `${selected.name} // ${selected.id}` : "ENTITY GRAPH VISUALIZER"}
-            statusLabel="GPU ACTIVE"
+            statusLabel={isMaximized ? "FULL VIEW" : "LIVE GRAPH"}
             statusColor="cyan"
             noPadding
           >
-            <div className="min-h-[420px] flex flex-col justify-between px-5 sm:px-6 pb-5 sm:pb-6">
-              {/* Graph area */}
-              <div className="flex-1 flex flex-col items-center justify-center py-16 gap-4">
-                <div className="relative">
-                  <div className="p-4 bg-white/[0.04] border border-white/10">
-                    <Network className="w-10 h-10 text-cyan-400/60 animate-pulse" />
-                  </div>
-                  {/* Orbiting dots */}
-                  <div className="absolute -top-2 -right-2 w-2 h-2 rounded-full bg-emerald-400/80 animate-ping" />
-                  <div className="absolute -bottom-2 -left-2 w-1.5 h-1.5 rounded-full bg-amber-400/80 animate-ping [animation-delay:0.5s]" />
+            {selectedCaseId ? (
+              <InvestigationGraph
+                caseId={selectedCaseId}
+                onGraphChange={onGraphChange}
+                isMaximized={isMaximized}
+                onMaximizeChange={setIsMaximized}
+              />
+            ) : (
+              <div className="flex min-h-[480px] flex-col items-center justify-center gap-3 text-center">
+                <Network className="h-8 w-8 text-cyan-400/35" />
+                <p className="text-[11px] font-mono text-white/45">SELECT A CASE TO LOAD ITS INVESTIGATION GRAPH</p>
+              </div>
+            )}
+          </TerminalCard>
+        </div>
+
+        {/* Side Cases Panel: Completely hidden when maximized */}
+        {!isMaximized && (
+          <div className="lg:col-span-4">
+            <TerminalCard title="CASES" statusLabel={`${cases.length} TOTAL`} statusColor="white">
+              {loadingCases ? (
+                <div className="flex items-center justify-center py-10 text-[10px] font-mono text-white/40">
+                  <RefreshCw className="mr-2 h-3.5 w-3.5 animate-spin text-cyan-400" />
+                  LOADING CASES
                 </div>
-
-                {selected ? (
-                  <div className="text-center space-y-1.5">
-                    <div className="text-sm font-semibold text-white">
-                      {selected.name}
-                    </div>
-                    <p className="text-[11px] text-white/40 font-mono max-w-xs text-center">
-                      {selected.nodes} nodes · {selected.edges} edges · {selected.regions.join(", ")}
-                    </p>
-                    <p className="text-[10px] text-white/25 font-mono">
-                      Neo4j graph engine will render here. Select a network to visualize.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="text-center space-y-1.5">
-                    <div className="text-sm font-semibold text-white">
-                      GRAPH TOPOLOGY READY
-                    </div>
-                    <p className="text-[11px] text-white/40 font-mono max-w-xs text-center">
-                      Select a network from the list to visualize its entity relationship graph.
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Footer status bar */}
-              <div className="text-[9px] text-white/25 border-t border-white/[0.06] pt-3 flex justify-between font-mono">
-                <span>CANVAS: MOUNTED</span>
-                <span>GPU ACCELERATION: ACTIVE</span>
-                <span>FORCE ENGINE: 3D</span>
-              </div>
-            </div>
-          </TerminalCard>
-        </div>
-
-        {/* Network list */}
-        <div className="lg:col-span-4">
-          <TerminalCard title="NETWORKS" statusLabel={`${networks.length} TOTAL`} statusColor="white">
-            <div className="space-y-2">
-              {networks.map((net) => (
-                <button
-                  key={net.id}
-                  onClick={() => setSelectedNetwork(net.id)}
-                  className={`w-full text-left border p-3.5 transition-all ${
-                    selectedNetwork === net.id
-                      ? "border-cyan-500/30 bg-cyan-950/20"
-                      : "border-white/[0.07] bg-transparent hover:border-white/15 hover:bg-white/[0.02]"
-                  }`}
-                >
-                  {/* ID + risk */}
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-mono text-white/40">
-                      {net.id}
-                    </span>
-                    <span
-                      className={`text-[9px] font-mono border px-1.5 py-px flex items-center gap-1 ${riskColors[net.risk]}`}
-                    >
-                      <span className={`w-1 h-1 rounded-full ${riskDotColors[net.risk]}`} />
-                      {net.risk}
-                    </span>
-                  </div>
-
-                  <div className="text-[12px] font-semibold text-white leading-snug mb-2">
-                    {net.name}
-                  </div>
-
-                  <div className="flex items-center gap-3 text-[10px] font-mono text-white/35">
-                    <span className="flex items-center gap-1">
-                      <Users className="w-2.5 h-2.5" />
-                      {net.nodes}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Link2 className="w-2.5 h-2.5" />
-                      {net.edges}
-                    </span>
-                    {net.crossBorder && (
-                      <span className="flex items-center gap-1 text-amber-400/70">
-                        <Globe className="w-2.5 h-2.5" />
-                        CROSS-BORDER
+              ) : null}
+              {caseError ? (
+                <div className="space-y-3 py-6 text-center">
+                  <ShieldAlert className="mx-auto h-5 w-5 text-red-400" />
+                  <p className="text-[10px] font-mono text-white/45">{caseError}</p>
+                  <button
+                    onClick={() => void loadCases()}
+                    className="border border-white/10 px-2 py-1 text-[9px] font-mono text-white/60 hover:bg-white/[0.04]"
+                  >
+                    RETRY
+                  </button>
+                </div>
+              ) : null}
+              {!loadingCases && !caseError && cases.length === 0 ? (
+                <div className="py-10 text-center text-[10px] font-mono text-white/35">NO CASES AVAILABLE</div>
+              ) : null}
+              <div className="space-y-2">
+                {cases.map((caseItem) => (
+                  <button
+                    key={caseItem.id}
+                    onClick={() => {
+                      setSelectedCaseId(caseItem.id);
+                      setGraphCounts({ nodes: 0, edges: 0 });
+                    }}
+                    className={`w-full border p-3.5 text-left transition-all ${
+                      selectedCaseId === caseItem.id
+                        ? "border-cyan-500/30 bg-cyan-950/20"
+                        : "border-white/[0.07] hover:border-white/15 hover:bg-white/[0.02]"
+                    }`}
+                  >
+                    <div className="mb-1.5 flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-mono text-white/40">{caseItem.id}</span>
+                      <span
+                        className={`border px-1.5 py-px text-[9px] font-mono ${
+                          priorityStyles[caseItem.priority] || priorityStyles.MEDIUM
+                        }`}
+                      >
+                        {caseItem.priority}
                       </span>
-                    )}
-                  </div>
-
-                  <div className="text-[9px] font-mono text-white/20 mt-2">
-                    {net.caseId} · {net.lastActivity}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </TerminalCard>
-        </div>
+                    </div>
+                    <p className="mb-2 text-[12px] font-semibold leading-snug text-white">{caseItem.name}</p>
+                    <div className="flex items-center gap-3 text-[10px] font-mono text-white/35">
+                      <span className="flex items-center gap-1">
+                        <Users className="h-2.5 w-2.5" />
+                        {caseItem.entities} indexed
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Link2 className="h-2.5 w-2.5" />
+                        {caseItem.networks} graph
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </TerminalCard>
+          </div>
+        )}
       </div>
 
-      <div className="text-[9px] font-mono text-white/20 tracking-widest uppercase border-t border-white/[0.06] pt-3">
-        NETWORK TOPOLOGY ENGINE // FORENSIC INTELLIGENCE SYSTEM
+      <div className="border-t border-white/[0.06] pt-3 text-[9px] font-mono uppercase tracking-widest text-white/20">
+        Network Topology Engine // Supabase JSONB → Neo4j → React Flow
       </div>
     </div>
   );
