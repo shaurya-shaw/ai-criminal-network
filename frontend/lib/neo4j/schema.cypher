@@ -91,3 +91,14 @@ FOR (et:Event) ON (et.timestamp);
 // Index on Evidence type
 CREATE INDEX evidence_type_idx IF NOT EXISTS
 FOR (ev:Evidence) ON (ev.evidenceType);
+
+-- Source-scoped projection lookup indexes. Extraction IDs are local to a FIR,
+-- so graph identities include case and source provenance.
+CREATE INDEX entity_case_source_idx IF NOT EXISTS
+FOR (e:Entity) ON (e.caseId, e.sourceKey);
+
+CREATE INDEX evidence_case_source_idx IF NOT EXISTS
+FOR (ev:Evidence) ON (ev.caseId, ev.sourceKey);
+
+CREATE INDEX event_case_source_idx IF NOT EXISTS
+FOR (et:Event) ON (et.caseId, et.sourceKey);

@@ -16,6 +16,7 @@
     "@tsparticles/engine": "^4.3.2",
     "@tsparticles/react": "^4.3.2",
     "@tsparticles/slim": "^4.3.2",
+    "@xyflow/react": "^12.11.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.34.0",

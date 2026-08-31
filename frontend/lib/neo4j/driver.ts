@@ -8,22 +8,13 @@ function cleanUri(raw: string): string {
   return cleaned.replace(/^["']|["']$/g, "").trim();
 }
 
-const rawUri =
-  process.env.NEO4J_URI ||
-  process.env.NEXT_PUBLIC_NEO4J_URI ||
-  "";
+const rawUri = process.env.NEO4J_URI || "";
 
 const NEO4J_URI = cleanUri(rawUri);
 
-const NEO4J_USERNAME =
-  process.env.NEO4J_USERNAME ||
-  process.env.NEXT_PUBLIC_NEO4J_USERNAME ||
-  "neo4j";
+const NEO4J_USERNAME = process.env.NEO4J_USERNAME || "neo4j";
 
-const NEO4J_PASSWORD =
-  process.env.NEO4J_PASSWORD ||
-  process.env.NEXT_PUBLIC_NEO4J_PASSWORD ||
-  "";
+const NEO4J_PASSWORD = process.env.NEO4J_PASSWORD || "";
 
 // ─── Singleton Driver Instance ───────────────────────────────────────────────
 
@@ -72,7 +63,10 @@ export async function withSession<T>(
     );
   }
 
+  const database = process.env.NEO4J_DATABASE || undefined;
+
   const session = driver.session({
+    database,
     defaultAccessMode:
       mode === "READ"
         ? neo4j.session.READ
@@ -142,12 +136,14 @@ export async function verifyNeo4jConnection(): Promise<Neo4jConnectionStatus> {
     let relationshipCount = 0;
 
     try {
-      const counts = await readQuery<{ nodes: { low: number }; rels: { low: number } }>(
-        `MATCH (n) WITH count(n) AS nodes MATCH ()-[r]->() RETURN nodes, count(r) AS rels`
+      const counts = await readQuery<{ nodes: any; rels: any }>(
+        `CALL { MATCH (n) RETURN count(n) AS nodes } CALL { MATCH ()-[r]->() RETURN count(r) AS rels } RETURN nodes, rels`
       );
       if (counts.length > 0) {
-        nodeCount = typeof counts[0].nodes === "number" ? counts[0].nodes : (counts[0].nodes?.low ?? 0);
-        relationshipCount = typeof counts[0].rels === "number" ? counts[0].rels : (counts[0].rels?.low ?? 0);
+        const rawNodes = counts[0].nodes;
+        const rawRels = counts[0].rels;
+        nodeCount = typeof rawNodes === "number" ? rawNodes : (rawNodes?.low ?? 0);
+        relationshipCount = typeof rawRels === "number" ? rawRels : (rawRels?.low ?? 0);
       }
     } catch {
       // Counts query failure is non-fatal for connectivity check
@@ -206,6 +202,9 @@ const SCHEMA_STATEMENTS = [
   `CREATE INDEX account_number_idx IF NOT EXISTS FOR (b:BankAccount) ON (b.accountNumber)`,
   `CREATE INDEX event_timestamp_idx IF NOT EXISTS FOR (et:Event) ON (et.timestamp)`,
   `CREATE INDEX evidence_type_idx IF NOT EXISTS FOR (ev:Evidence) ON (ev.evidenceType)`,
+  `CREATE INDEX entity_case_source_idx IF NOT EXISTS FOR (e:Entity) ON (e.caseId, e.sourceKey)`,
+  `CREATE INDEX evidence_case_source_idx IF NOT EXISTS FOR (ev:Evidence) ON (ev.caseId, ev.sourceKey)`,
+  `CREATE INDEX event_case_source_idx IF NOT EXISTS FOR (et:Event) ON (et.caseId, et.sourceKey)`,
 ];
 
 export async function initializeNeo4jSchema(): Promise<{

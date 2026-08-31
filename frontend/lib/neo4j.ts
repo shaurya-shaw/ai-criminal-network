@@ -17,5 +17,6 @@ export {
 };
 
 export * from "./neo4j/types";
+export * from "./neo4j/case-graph";
 
 export default driver;

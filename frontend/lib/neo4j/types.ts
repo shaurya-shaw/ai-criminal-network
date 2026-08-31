@@ -201,3 +201,43 @@ export interface VisualizerGraphData {
   nodes: VisualizerNode[];
   edges: VisualizerEdge[];
 }
+
+// ─── Case Investigation Graph API ───────────────────────────────────────────
+
+export type InvestigationNodeType = Exclude<NodeLabel, "Entity">;
+
+export interface InvestigationGraphNode {
+  /** Stable Neo4j graph identifier, safe to pass directly to React Flow. */
+  id: string;
+  /** Human-readable node title. */
+  label: string;
+  type: InvestigationNodeType;
+  riskScore?: number;
+  confidence?: number;
+  properties: Record<string, unknown>;
+}
+
+export interface InvestigationGraphEdge {
+  /** Stable relationship identifier. */
+  id: string;
+  source: string;
+  target: string;
+  type: string;
+  label: string;
+  confidence?: number;
+  properties: Record<string, unknown>;
+}
+
+export interface InvestigationGraphData {
+  nodes: InvestigationGraphNode[];
+  edges: InvestigationGraphEdge[];
+}
+
+export interface GraphSyncDiagnostics {
+  entities: number;
+  evidence: number;
+  events: number;
+  relationships: number;
+  skipped: number;
+  errors: string[];
+}
