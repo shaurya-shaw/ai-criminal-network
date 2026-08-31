@@ -305,7 +305,8 @@ export default function DataSourcesPage() {
             onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-widest uppercase bg-emerald-500 text-black hover:bg-emerald-400 px-3.5 py-1.5 transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] cursor-pointer"
           >
-            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />+ INGEST DATA
+            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span>INGEST DATA</span>
           </button>
           <button
             onClick={() => fetchSources(true)}
@@ -405,7 +406,8 @@ export default function DataSourcesPage() {
                       onClick={() => setIsModalOpen(true)}
                       className="px-4 py-2 text-[10px] font-bold tracking-widest uppercase bg-emerald-500 text-black hover:bg-emerald-400 transition-all inline-flex items-center gap-1.5 cursor-pointer"
                     >
-                      <Plus className="w-3.5 h-3.5" />+ INGEST DATA
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>INGEST DATA</span>
                     </button>
                   </td>
                 </tr>
