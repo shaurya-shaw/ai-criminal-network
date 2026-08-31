@@ -11,11 +11,13 @@
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@clerk/nextjs": "^7.8.2",
+    "@dagrejs/dagre": "^3.1.1",
     "@google/genai": "^2.19.0",
     "@supabase/supabase-js": "^2.112.4",
     "@tsparticles/engine": "^4.3.2",
     "@tsparticles/react": "^4.3.2",
     "@tsparticles/slim": "^4.3.2",
+    "@types/dagre": "^0.7.54",
     "@xyflow/react": "^12.11.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
