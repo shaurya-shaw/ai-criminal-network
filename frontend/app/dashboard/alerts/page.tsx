@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   ShieldAlert,
   Wifi,
@@ -11,282 +11,361 @@ import {
   CheckCircle2,
   Clock,
   Eye,
+  RefreshCw,
+  AlertCircle,
+  PlusCircle,
+  Search,
+  Check,
 } from "lucide-react";
+import Link from "next/link";
 import TerminalCard from "../components/TerminalCard";
+import type { AlertSeverity, AlertStatus, GlobalAlert } from "@/lib/api/types";
 
-type Severity = "CRITICAL" | "WARNING" | "INFO";
-type AlertStatus = "NEW" | "ACKNOWLEDGED" | "RESOLVED";
+type SeverityFilter = AlertSeverity | "ALL";
+type StatusFilter = AlertStatus | "ALL";
 
-interface Alert {
-  id: string;
-  title: string;
-  description: string;
-  severity: Severity;
-  status: AlertStatus;
-  caseId: string;
-  timestamp: string;
-  icon: React.ElementType;
-}
-
-const alerts: Alert[] = [
-  {
-    id: "ALT-0091",
-    title: "Network anomaly detected",
-    description:
-      "Unusual spike in connection requests from entity E-1482 across 3 nodes in cluster B. Possible lateral movement detected.",
-    severity: "CRITICAL",
-    status: "NEW",
-    caseId: "CASE-0091",
-    timestamp: "2026-08-29 13:48 UTC",
-    icon: Wifi,
-  },
-  {
-    id: "ALT-0090",
-    title: "High-risk entity flagged for review",
-    description:
-      "Entity E-0774 matched against cross-case correlation engine. Appears in 3 active cases. Manual review required.",
-    severity: "CRITICAL",
-    status: "NEW",
-    caseId: "CASE-0088",
-    timestamp: "2026-08-29 13:21 UTC",
-    icon: User,
-  },
-  {
-    id: "ALT-0089",
-    title: "Financial spike — offshore account",
-    description:
-      "Account ACC-007742881 logged a ₹4.2CR transaction to an unidentified offshore entity. Flagged for AML review.",
-    severity: "WARNING",
-    status: "ACKNOWLEDGED",
-    caseId: "CASE-0092",
-    timestamp: "2026-08-29 12:05 UTC",
-    icon: DollarSign,
-  },
-  {
-    id: "ALT-0088",
-    title: "New connection established",
-    description:
-      "Previously unknown entity added a connection to Rajan Mehra (E-0774). Entity ID pending assignment.",
-    severity: "WARNING",
-    status: "NEW",
-    caseId: "CASE-0091",
-    timestamp: "2026-08-29 11:44 UTC",
-    icon: Activity,
-  },
-  {
-    id: "ALT-0087",
-    title: "Cross-case entity match",
-    description:
-      "Entity E-1482 found to share attributes with E-0774. Automated cross-case linking triggered.",
-    severity: "INFO",
-    status: "ACKNOWLEDGED",
-    caseId: "CASE-0088",
-    timestamp: "2026-08-29 10:30 UTC",
-    icon: AlertTriangle,
-  },
-  {
-    id: "ALT-0085",
-    title: "Data source sync failure",
-    description:
-      "CDRS feed failed to synchronize for 18 minutes. Partial data gap logged. Auto-recovery initiated.",
-    severity: "WARNING",
-    status: "RESOLVED",
-    caseId: "CASE-0083",
-    timestamp: "2026-08-28 22:14 UTC",
-    icon: Activity,
-  },
-  {
-    id: "ALT-0082",
-    title: "Entity risk score elevated",
-    description:
-      "Patel Logistics (E-0822) risk score raised from 42 to 55 after new evidence linkage.",
-    severity: "INFO",
-    status: "RESOLVED",
-    caseId: "CASE-0088",
-    timestamp: "2026-08-28 18:00 UTC",
-    icon: AlertTriangle,
-  },
-];
-
-type FilterTab = Severity | "ALL";
-
-const severityColors: Record<Severity, { border: string; badge: string; dot: string }> = {
+const severityColors: Record<
+  AlertSeverity,
+  { border: string; badge: string; dot: string; text: string }
+> = {
   CRITICAL: {
-    border: "border-l-red-400",
+    border: "border-l-red-500",
     badge: "text-red-400 border-red-500/30 bg-red-950/40",
     dot: "bg-red-400",
+    text: "text-red-400",
   },
   WARNING: {
-    border: "border-l-amber-400",
+    border: "border-l-amber-500",
     badge: "text-amber-400 border-amber-500/30 bg-amber-950/40",
     dot: "bg-amber-400",
+    text: "text-amber-400",
   },
   INFO: {
-    border: "border-l-cyan-400",
+    border: "border-l-cyan-500",
     badge: "text-cyan-400 border-cyan-500/30 bg-cyan-950/40",
     dot: "bg-cyan-400",
+    text: "text-cyan-400",
   },
 };
 
-const statusIcons: Record<AlertStatus, { icon: React.ElementType; color: string }> = {
-  NEW: { icon: ShieldAlert, color: "text-red-400" },
-  ACKNOWLEDGED: { icon: Eye, color: "text-amber-400" },
-  RESOLVED: { icon: CheckCircle2, color: "text-white/30" },
+const statusIcons: Record<
+  AlertStatus,
+  { icon: React.ElementType; color: string; label: string }
+> = {
+  NEW: { icon: ShieldAlert, color: "text-red-400", label: "NEW" },
+  ACKNOWLEDGED: { icon: Eye, color: "text-amber-400", label: "ACKNOWLEDGED" },
+  RESOLVED: { icon: CheckCircle2, color: "text-emerald-400", label: "RESOLVED" },
 };
 
-const filterTabs: FilterTab[] = ["ALL", "CRITICAL", "WARNING", "INFO"];
+const severityTabs: SeverityFilter[] = ["ALL", "CRITICAL", "WARNING", "INFO"];
+const statusTabs: StatusFilter[] = ["ALL", "NEW", "ACKNOWLEDGED", "RESOLVED"];
 
 export default function AlertsPage() {
-  const [filter, setFilter] = useState<FilterTab>("ALL");
+  const [alerts, setAlerts] = useState<GlobalAlert[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [newCount, setNewCount] = useState(0);
+  const [criticalCount, setCriticalCount] = useState(0);
 
-  const filtered = alerts.filter(
-    (a) => filter === "ALL" || a.severity === filter
-  );
+  const [severityFilter, setSeverityFilter] = useState<SeverityFilter>("ALL");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
+  const [search, setSearch] = useState("");
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  const newCount = alerts.filter((a) => a.status === "NEW").length;
-  const critCount = alerts.filter((a) => a.severity === "CRITICAL").length;
+  const fetchAlerts = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const params = new URLSearchParams();
+      if (severityFilter !== "ALL") params.set("severity", severityFilter);
+      if (statusFilter !== "ALL") params.set("status", statusFilter);
+
+      const res = await fetch(`/api/alerts?${params.toString()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.alerts)) {
+          setAlerts(data.alerts);
+          setNewCount(data.newCount || 0);
+          setCriticalCount(data.criticalCount || 0);
+        }
+      } else {
+        setError("Failed to fetch alerts from database.");
+      }
+    } catch (err) {
+      console.warn("Could not fetch alerts from API:", err);
+      setError("Network or server connection error.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [severityFilter, statusFilter]);
+
+  useEffect(() => {
+    fetchAlerts();
+  }, [fetchAlerts]);
+
+  const handleUpdateStatus = async (alertId: string, newStatus: AlertStatus) => {
+    try {
+      setUpdatingId(alertId);
+      const res = await fetch(`/api/alerts/${alertId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.ok) {
+        // Optimistic UI update
+        setAlerts((prev) =>
+          prev.map((a) => (a.id === alertId ? { ...a, status: newStatus } : a))
+        );
+        if (newStatus === "RESOLVED" || newStatus === "ACKNOWLEDGED") {
+          setNewCount((prev) => Math.max(0, prev - 1));
+        }
+      }
+    } catch (err) {
+      console.error("Failed to update alert status:", err);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const filteredAlerts = alerts.filter((a) => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return (
+      a.title.toLowerCase().includes(q) ||
+      a.description.toLowerCase().includes(q) ||
+      a.caseId.toLowerCase().includes(q) ||
+      a.id.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Page header */}
+      {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <ShieldAlert className="w-4 h-4 text-white/40" />
             <span className="text-[10px] font-mono tracking-widest text-white/40 uppercase">
-              Intelligence / Priority Alerts
+              Intelligence / Threat Alerts
             </span>
           </div>
           <h1 className="text-base sm:text-lg font-bold tracking-tight text-white uppercase">
-            Priority Alerts
+            Threat & Anomaly Feed
           </h1>
           <p className="text-[11px] text-white/40 font-mono mt-0.5">
-            {alerts.length} total · {newCount} unread · {critCount} critical
+            {alerts.length} total alerts · {newCount} new action items · {criticalCount} critical threats
           </p>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] font-mono text-red-400 border border-red-500/30 bg-red-950/30 px-3 py-1.5 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-          {newCount} NEW
+        <div className="flex items-center gap-2">
+          <button
+            onClick={fetchAlerts}
+            disabled={isLoading}
+            className="p-1.5 border border-white/10 text-white/40 hover:text-white hover:bg-white/[0.04] transition-colors"
+            title="Refresh alerts"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-cyan-400" : ""}`} />
+          </button>
+          <Link
+            href="/dashboard/data-sources"
+            className="flex items-center gap-1.5 text-[10px] font-mono text-cyan-400 border border-cyan-500/30 bg-cyan-950/30 px-3 py-1.5 hover:bg-cyan-950/50 transition-colors"
+          >
+            <PlusCircle className="w-3 h-3" />
+            INGEST INTELLIGENCE
+          </Link>
         </div>
       </div>
 
-      {/* Summary stat strip */}
-      <div className="grid grid-cols-3 gap-3">
-        {(["CRITICAL", "WARNING", "INFO"] as Severity[]).map((sev) => {
-          const count = alerts.filter((a) => a.severity === sev).length;
-          const colors = severityColors[sev];
-          return (
-            <div
-              key={sev}
-              className={`border border-white/[0.08] bg-[#0c0d12]/60 p-3 border-l-2 ${colors.border} cursor-pointer hover:bg-white/[0.02] transition-colors`}
-              onClick={() => setFilter(sev)}
-            >
-              <div className="text-xl font-bold text-white">{count}</div>
-              <div className={`text-[10px] font-mono mt-0.5 ${colors.badge.split(" ")[0]}`}>
-                {sev}
-              </div>
-            </div>
-          );
-        })}
+      {/* Filter tabs & Search */}
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Severity tabs */}
+          <div className="flex items-center border border-white/[0.08] bg-[#0c0d12]">
+            {severityTabs.map((t) => (
+              <button
+                key={t}
+                onClick={() => setSeverityFilter(t)}
+                className={`px-3 py-1.5 text-[10px] font-mono tracking-widest uppercase transition-colors border-r border-white/[0.06] last:border-r-0 ${
+                  severityFilter === t
+                    ? "bg-white/[0.08] text-white"
+                    : "text-white/40 hover:text-white/70 hover:bg-white/[0.03]"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+
+          {/* Status tabs */}
+          <div className="flex items-center border border-white/[0.08] bg-[#0c0d12]">
+            {statusTabs.map((st) => (
+              <button
+                key={st}
+                onClick={() => setStatusFilter(st)}
+                className={`px-2.5 py-1.5 text-[10px] font-mono tracking-widest uppercase transition-colors border-r border-white/[0.06] last:border-r-0 ${
+                  statusFilter === st
+                    ? "bg-white/[0.08] text-white"
+                    : "text-white/40 hover:text-white/70 hover:bg-white/[0.03]"
+                }`}
+              >
+                {st}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Search */}
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] text-white/40 text-[11px] font-mono w-full lg:max-w-xs">
+          <Search className="w-3 h-3 shrink-0" />
+          <input
+            type="text"
+            placeholder="Search alerts, cases, threats..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-transparent outline-none text-white/70 placeholder:text-white/25 w-full text-[11px] font-mono"
+          />
+        </div>
       </div>
 
-      {/* Filter tabs */}
-      <div className="flex items-center border border-white/[0.08] bg-[#0c0d12] w-fit">
-        {filterTabs.map((f) => (
+      {/* Error state */}
+      {error && (
+        <div className="border border-red-500/30 bg-red-950/20 p-4 text-center space-y-2">
+          <div className="flex items-center justify-center gap-2 text-red-400 font-mono text-[11px]">
+            <AlertCircle className="w-4 h-4" />
+            <span>{error}</span>
+          </div>
           <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 text-[10px] font-mono tracking-widest uppercase transition-colors border-r border-white/[0.06] last:border-r-0 ${
-              filter === f
-                ? "bg-white/[0.08] text-white"
-                : "text-white/40 hover:text-white/70 hover:bg-white/[0.03]"
-            }`}
+            onClick={fetchAlerts}
+            className="text-[10px] font-mono text-cyan-400 underline uppercase"
           >
-            {f}
-            {f !== "ALL" && (
-              <span className="ml-1.5 text-white/25">
-                ({alerts.filter((a) => a.severity === f).length})
-              </span>
-            )}
+            Retry Fetching Alerts
           </button>
-        ))}
-      </div>
+        </div>
+      )}
 
-      {/* Alert feed */}
-      <TerminalCard title="ALERT FEED" statusLabel={`${filtered.length} ALERTS`} statusColor="white">
-        <div className="space-y-2">
-          {filtered.map((alert) => {
-            const colors = severityColors[alert.severity];
-            const StatusIcon = statusIcons[alert.status].icon;
-            const Icon = alert.icon;
+      {/* Loading Skeleton */}
+      {isLoading && alerts.length === 0 && (
+        <div className="space-y-3">
+          {[1, 2, 3, 4].map((n) => (
+            <div key={n} className="border border-white/[0.07] bg-[#0a0b10] p-4 space-y-2 animate-pulse">
+              <div className="flex items-center justify-between">
+                <div className="h-4 bg-white/10 w-32 rounded" />
+                <div className="h-4 bg-white/10 w-20 rounded" />
+              </div>
+              <div className="h-4 bg-white/10 w-3/4 rounded" />
+              <div className="h-3 bg-white/10 w-full rounded" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Alerts feed list */}
+      {!isLoading && filteredAlerts.length === 0 ? (
+        <div className="border border-white/[0.08] p-12 text-center space-y-3">
+          <p className="text-white/30 font-mono text-[11px] tracking-widest uppercase">
+            No threat alerts recorded
+          </p>
+          <p className="text-[10px] font-mono text-white/20 max-w-sm mx-auto">
+            When you ingest FIRs, CDR communications, and surveillance memos in Data Sources, AI threat detection will automatically identify high-risk anomalies and raise active alerts here.
+          </p>
+          <Link
+            href="/dashboard/data-sources"
+            className="inline-block px-4 py-2 border border-white/10 text-cyan-400 font-mono text-[10px] hover:bg-white/[0.04] transition-colors"
+          >
+            Go to Data Sources →
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {filteredAlerts.map((a) => {
+            const sev = severityColors[a.severity] || severityColors.WARNING;
+            const stat = statusIcons[a.status] || statusIcons.NEW;
+            const StatusIcon = stat.icon;
 
             return (
               <div
-                key={alert.id}
-                className={`border border-white/[0.07] border-l-2 ${colors.border} bg-[#0a0b10] p-4 hover:border-white/15 transition-all group cursor-pointer`}
+                key={a.id}
+                className={`relative border border-white/[0.08] bg-[#0c0d12] p-4 border-l-4 ${sev.border} hover:border-white/20 transition-all`}
               >
-                <div className="flex items-start gap-3">
-                  {/* Severity icon */}
-                  <div className="mt-0.5 shrink-0">
-                    <Icon className={`w-3.5 h-3.5 ${colors.badge.split(" ")[0]}`} />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    {/* Header */}
-                    <div className="flex items-start justify-between gap-3 mb-1.5">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[12px] font-semibold text-white group-hover:text-white/90">
-                          {alert.title}
-                        </span>
-                        <span
-                          className={`text-[9px] font-mono border px-1.5 py-px ${colors.badge}`}
-                        >
-                          {alert.severity}
-                        </span>
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                  <div className="space-y-1.5 flex-1">
+                    {/* Header line */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[11px] font-mono text-white/50">{a.id}</span>
+                      <span className={`text-[9px] font-mono border px-1.5 py-px ${sev.badge}`}>
+                        {a.severity}
+                      </span>
+                      <div className="flex items-center gap-1 text-[10px] font-mono">
+                        <StatusIcon className={`w-3 h-3 ${stat.color}`} />
+                        <span className={stat.color}>{stat.label}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <StatusIcon
-                          className={`w-3.5 h-3.5 ${statusIcons[alert.status].color}`}
-                        />
-                        <span className="text-[9px] font-mono text-white/30">
-                          {alert.status}
-                        </span>
-                      </div>
+                      <Link
+                        href={`/dashboard/cases/${a.caseId}`}
+                        className="text-[9px] font-mono text-cyan-400/80 hover:text-cyan-300 border border-cyan-500/20 bg-cyan-950/20 px-1.5 py-px transition-colors"
+                      >
+                        {a.caseId}
+                      </Link>
                     </div>
+
+                    {/* Title */}
+                    <h3 className="text-[13px] font-semibold text-white leading-snug">
+                      {a.title}
+                    </h3>
 
                     {/* Description */}
-                    <p className="text-[11px] font-mono text-white/45 leading-relaxed mb-2.5">
-                      {alert.description}
+                    <p className="text-[11px] font-mono text-white/50 leading-relaxed">
+                      {a.description}
                     </p>
 
-                    {/* Footer */}
-                    <div className="flex items-center gap-4 text-[10px] font-mono text-white/25">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-2.5 h-2.5" />
-                        {alert.timestamp}
-                      </span>
-                      <span className="text-white/20">·</span>
-                      <span>{alert.caseId}</span>
-                      <span className="text-white/20">·</span>
-                      <span>{alert.id}</span>
+                    {/* Timestamp footer */}
+                    <div className="flex items-center gap-1 pt-1 text-[10px] font-mono text-white/30">
+                      <Clock className="w-3 h-3 text-white/20" />
+                      <span>{a.timestamp}</span>
                     </div>
+                  </div>
+
+                  {/* Triage Action Buttons */}
+                  <div className="flex items-center sm:flex-col gap-1.5 shrink-0 pt-2 sm:pt-0">
+                    {a.status === "NEW" && (
+                      <button
+                        onClick={() => handleUpdateStatus(a.id, "ACKNOWLEDGED")}
+                        disabled={updatingId === a.id}
+                        className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-mono border border-amber-500/30 text-amber-400 bg-amber-950/20 hover:bg-amber-950/40 transition-colors disabled:opacity-50"
+                        title="Acknowledge alert"
+                      >
+                        <Eye className="w-3 h-3" />
+                        Acknowledge
+                      </button>
+                    )}
+                    {a.status !== "RESOLVED" && (
+                      <button
+                        onClick={() => handleUpdateStatus(a.id, "RESOLVED")}
+                        disabled={updatingId === a.id}
+                        className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-mono border border-emerald-500/30 text-emerald-400 bg-emerald-950/20 hover:bg-emerald-950/40 transition-colors disabled:opacity-50"
+                        title="Mark as resolved"
+                      >
+                        <Check className="w-3 h-3" />
+                        Resolve
+                      </button>
+                    )}
+                    {a.status === "RESOLVED" && (
+                      <button
+                        onClick={() => handleUpdateStatus(a.id, "NEW")}
+                        disabled={updatingId === a.id}
+                        className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-mono border border-white/10 text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-colors disabled:opacity-50"
+                        title="Re-open alert"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        Reopen
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
             );
           })}
-
-          {filtered.length === 0 && (
-            <div className="py-12 text-center text-white/25 font-mono text-[11px] tracking-widest uppercase">
-              No alerts in this category
-            </div>
-          )}
         </div>
-      </TerminalCard>
-
-      <div className="text-[9px] font-mono text-white/20 tracking-widest uppercase border-t border-white/[0.06] pt-3">
-        ALERT ENGINE // {filtered.length} of {alerts.length} records · FORENSIC INTELLIGENCE SYSTEM
-      </div>
+      )}
     </div>
   );
 }

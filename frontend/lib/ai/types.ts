@@ -62,14 +62,36 @@ export interface ExtractedEvidenceRef {
   entitiesReferenced?: string[]; // Entity IDs — MUST exist in entities[]
 }
 
+export interface ExtractedAlert {
+  id?: string;
+  title: string;
+  description: string;
+  severity: "CRITICAL" | "WARNING" | "INFO";
+  category?: string;
+  entityId?: string;
+}
+
+
+export interface ExtractedAIAssessment {
+  finding: string;
+  confidence: number;
+  category: string;
+}
+
 export interface IntelligenceExtractionResult {
+  caseTitle?: string;
   summary: string;
+  brief?: string;
+  jurisdiction?: string;
   classification?: string;
   confidenceScore: number;
+  aiAssessment?: ExtractedAIAssessment;
   entities: ExtractedEntity[];
   relationships: ExtractedRelationship[];
   events: ExtractedEvent[];
   evidenceReferences: ExtractedEvidenceRef[];
+  alerts?: ExtractedAlert[];
   extractedAt?: string;
   modelUsed?: string;
 }
+

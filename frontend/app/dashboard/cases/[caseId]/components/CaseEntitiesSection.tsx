@@ -37,54 +37,64 @@ export default function CaseEntitiesSection({
               </tr>
             </thead>
             <tbody>
-              {caseData.entities.map((entity, i) => {
-                const Icon = entityTypeIcons[entity.type];
-                return (
-                  <tr
-                    key={entity.id}
-                    className={`border-b border-white/[0.05] hover:bg-white/[0.025] transition-colors cursor-pointer ${i % 2 === 1 ? "bg-white/[0.01]" : ""}`}
-                  >
-                    <td className="py-3 px-5 text-white/40">{entity.id}</td>
-                    <td className="py-3 px-3">
-                      <div className="text-white font-semibold">
-                        {entity.name}
-                      </div>
-                      {entity.alias && (
-                        <div className="text-[10px] text-white/30">
-                          aka {entity.alias}
+              {(caseData.entities || []).length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-10 text-center text-white/35 font-mono text-[10px] uppercase tracking-widest">
+                    No entities identified in case files yet.
+                  </td>
+                </tr>
+              ) : (
+                (caseData.entities || []).map((entity, i) => {
+                  const Icon = entityTypeIcons[entity.type] || entityTypeIcons.PERSON;
+                  const typeColor = entityTypeColors[entity.type] || entityTypeColors.PERSON;
+                  return (
+                    <tr
+                      key={entity.id}
+                      className={`border-b border-white/[0.05] hover:bg-white/[0.025] transition-colors cursor-pointer ${i % 2 === 1 ? "bg-white/[0.01]" : ""}`}
+                    >
+                      <td className="py-3 px-5 text-white/40">{entity.id}</td>
+                      <td className="py-3 px-3">
+                        <div className="text-white font-semibold">
+                          {entity.name}
                         </div>
-                      )}
-                    </td>
-                    <td className="py-3 px-3">
-                      <span
-                        className={`flex items-center gap-1.5 ${entityTypeColors[entity.type]}`}
-                      >
-                        <Icon className="w-3 h-3" />
-                        {entity.type}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3">
-                      <span
-                        className={`font-bold ${riskScoreColor(entity.riskScore)}`}
-                      >
-                        {entity.riskScore}
-                      </span>
-                      <span className="text-white/20">/100</span>
-                    </td>
-                    <td className="py-3 px-3 hidden md:table-cell text-white/30">
-                      {entity.lastSeen}
-                    </td>
-                    <td className="py-3 px-3 pr-5">
-                      <span
-                        className={`text-[9px] border px-2 py-0.5 ${entityStatusColors[entity.status]}`}
-                      >
-                        {entity.status}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
+                        {entity.alias && (
+                          <div className="text-[10px] text-white/30">
+                            aka {entity.alias}
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-3 px-3">
+                        <span
+                          className={`flex items-center gap-1.5 ${typeColor}`}
+                        >
+                          <Icon className="w-3 h-3" />
+                          {entity.type}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3">
+                        <span
+                          className={`font-bold ${riskScoreColor(entity.riskScore)}`}
+                        >
+                          {entity.riskScore}
+                        </span>
+                        <span className="text-white/20">/100</span>
+                      </td>
+                      <td className="py-3 px-3 hidden md:table-cell text-white/30">
+                        {entity.lastSeen}
+                      </td>
+                      <td className="py-3 px-3 pr-5">
+                        <span
+                          className={`text-[9px] border px-2 py-0.5 ${entityStatusColors[entity.status] || entityStatusColors.FLAGGED}`}
+                        >
+                          {entity.status}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
+
           </table>
         </div>
       </div>

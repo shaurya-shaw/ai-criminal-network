@@ -5,6 +5,7 @@ import {
   MapPin,
   Phone,
   CreditCard,
+  Car,
   ShieldAlert,
   Eye,
   CheckCircle2,
@@ -36,6 +37,7 @@ export const entityTypeIcons: Record<EntityType, React.ElementType> = {
   LOCATION: MapPin,
   PHONE: Phone,
   ACCOUNT: CreditCard,
+  VEHICLE: Car,
 };
 
 export const entityTypeColors: Record<EntityType, string> = {
@@ -44,7 +46,9 @@ export const entityTypeColors: Record<EntityType, string> = {
   LOCATION: "text-amber-400",
   PHONE: "text-purple-400",
   ACCOUNT: "text-blue-400",
+  VEHICLE: "text-teal-400",
 };
+
 
 export const entityStatusColors: Record<EntityStatus, string> = {
   FLAGGED: "text-red-400 border-red-500/30 bg-red-950/40",

@@ -2,8 +2,9 @@
 
 export type Priority = "HIGH" | "MEDIUM" | "LOW";
 export type CaseStatus = "ACTIVE" | "CLOSED" | "PENDING";
-export type EntityType = "PERSON" | "ORGANIZATION" | "LOCATION" | "PHONE" | "ACCOUNT";
+export type EntityType = "PERSON" | "ORGANIZATION" | "LOCATION" | "PHONE" | "ACCOUNT" | "VEHICLE";
 export type EntityStatus = "FLAGGED" | "MONITORING" | "CLEARED";
+
 export type TimelineEventType = "SURVEILLANCE" | "FINANCIAL" | "COMMUNICATION" | "ARREST" | "INTEL" | "SYSTEM";
 export type EvidenceType = "DOCUMENT" | "FINANCIAL_RECORD" | "COMMUNICATION" | "MEDIA" | "PHYSICAL";
 export type AlertSeverity = "CRITICAL" | "WARNING" | "INFO";
@@ -116,7 +117,9 @@ export interface Entity {
   cases: string[];
   lastSeen: string;
   status: EntityStatus;
+  attributes?: Record<string, any>;
 }
+
 
 export interface NetworkGraphNode {
   id: string;

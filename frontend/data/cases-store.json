@@ -1,0 +1,624 @@
+{
+  "cases": [
+    {
+      "id": "CASE-0090",
+      "name": "Money laundering",
+      "status": "ACTIVE",
+      "priority": "HIGH",
+      "description": "This report details suspected financial fraud, coordinated logistics, and communications involving existing entities and newly identified individuals and locations. A significant financial transfer to an account linked to Northstar Logistics Ltd. is noted, followed by related movements and a meeting at a new storage facility.",
+      "brief": "On August 30, 2026, fictional Meridian Cooperative Bank records revealed a transfer of INR 485,000 from account ML-TEST-4401 to NL-TEST-7712, an account previously associated with Northstar Logistics Ltd. Subsequent surveillance observed Ravi Sen, an operations manager at Northstar Logistics Ltd., arriving at Meridian Warehouse in vehicle WB-99-TEST-091. Later, a white Falcon Courier hatchback (WB-99-TEST-204) entered East Dock Storage Unit 4, a new storage facility. Neel Arora, identified as the operator of East Dock Storage Unit 4, was linked to phone number +91-90000-10093. A meeting between Neel Arora and Ravi Sen occurred near the storage facility, followed by a 176-second phone call between +91-90000-10092 and +91-90000-10093. The WB-99-TEST-204 then departed East Dock Storage Unit 4. This intelligence adds new entities and locations to the ongoing CASE-0091 investigation, corroborating earlier activity and suggesting a coordinated network.",
+      "investigator": "AGENT-ASHYTA",
+      "team": [
+        "AGENT-ASHYTA",
+        "AI FORENSIC AGENT"
+      ],
+      "opened": "2026-08-31",
+      "updated": "Just now",
+      "jurisdiction": "FICTIONAL - Meridian Economic Offences Cell",
+      "classification": "LAW ENFORCEMENT SENSITIVE",
+      "entityCount": 16,
+      "relationshipCount": 14,
+      "evidenceCount": 5,
+      "alertCount": 3,
+      "aiAssessment": {
+        "finding": "The newly identified individual, Neel Arora, operating East Dock Storage Unit 4, appears to be a critical intermediary in the coordinated movement of goods and communications, potentially serving as a central coordinator for logistics and storage operations linked to the financial fraud.",
+        "confidence": 90,
+        "category": "PRIMARY SUSPECT ANALYSIS"
+      },
+      "networks": [
+        {
+          "id": "NET-001",
+          "name": "Money laundering Core Ring",
+          "nodes": 16,
+          "edges": 14,
+          "riskLevel": "CRITICAL"
+        }
+      ],
+      "entities": [
+        {
+          "id": "ENT-1",
+          "name": "Marcus Vale",
+          "type": "PERSON",
+          "riskScore": 30,
+          "status": "CLEARED",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-2",
+          "name": "Diana Holt",
+          "type": "PERSON",
+          "riskScore": 30,
+          "status": "CLEARED",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-3",
+          "name": "Ravi Sen",
+          "type": "PERSON",
+          "riskScore": 70,
+          "status": "MONITORING",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-4",
+          "name": "Neel Arora",
+          "type": "PERSON",
+          "riskScore": 85,
+          "status": "FLAGGED",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-5",
+          "name": "Northstar Logistics Ltd.",
+          "type": "ORGANIZATION",
+          "riskScore": 75,
+          "status": "FLAGGED",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-6",
+          "name": "Meridian Ledger Services",
+          "type": "ORGANIZATION",
+          "riskScore": 20,
+          "status": "CLEARED",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-7",
+          "name": "Meridian Cooperative Bank",
+          "type": "ORGANIZATION",
+          "riskScore": 40,
+          "status": "MONITORING",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-8",
+          "name": "Meridian Economic Offences Cell",
+          "type": "ORGANIZATION",
+          "riskScore": 0,
+          "status": "CLEARED",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-9",
+          "name": "East Dock Storage Unit 4",
+          "type": "LOCATION",
+          "riskScore": 80,
+          "status": "FLAGGED",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-10",
+          "name": "Meridian Warehouse",
+          "type": "LOCATION",
+          "riskScore": 50,
+          "status": "MONITORING",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-11",
+          "name": "WB-99-TEST-091",
+          "type": "VEHICLE",
+          "riskScore": 60,
+          "status": "MONITORING",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-12",
+          "name": "WB-99-TEST-204",
+          "type": "VEHICLE",
+          "riskScore": 70,
+          "status": "MONITORING",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-13",
+          "name": "+91-90000-10093",
+          "type": "PHONE",
+          "riskScore": 80,
+          "status": "FLAGGED",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-14",
+          "name": "+91-90000-10092",
+          "type": "PHONE",
+          "riskScore": 70,
+          "status": "MONITORING",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-15",
+          "name": "ML-TEST-4401",
+          "type": "ACCOUNT",
+          "riskScore": 80,
+          "status": "FLAGGED",
+          "lastSeen": "2026-08-31"
+        },
+        {
+          "id": "ENT-16",
+          "name": "NL-TEST-7712",
+          "type": "ACCOUNT",
+          "riskScore": 85,
+          "status": "FLAGGED",
+          "lastSeen": "2026-08-31"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "T-001",
+          "timestamp": "2026-08-31 09:00",
+          "title": "Case Opened / Intelligence Ingested",
+          "description": "Case file initialized from FIR upload (money_laundering_CASE-0091.pdf). Assigned to AGENT-ASHYTA.",
+          "type": "SYSTEM"
+        },
+        {
+          "id": "T-002",
+          "timestamp": "2026-08-28 18:42",
+          "title": "Financial Transfer",
+          "description": "INR 485,000 transferred from ML-TEST-4401 to NL-TEST-7712.",
+          "type": "FINANCIAL",
+          "relatedEntities": [
+            "ENT-15",
+            "ENT-16",
+            "ENT-7"
+          ]
+        },
+        {
+          "id": "T-003",
+          "timestamp": "2026-08-30 19:10",
+          "title": "Ravi Sen Arrives at Meridian Warehouse",
+          "description": "Ravi Sen arrives at Meridian Warehouse in WB-99-TEST-091.",
+          "type": "SURVEILLANCE",
+          "relatedEntities": [
+            "ENT-3",
+            "ENT-10",
+            "ENT-11"
+          ]
+        },
+        {
+          "id": "T-004",
+          "timestamp": "2026-08-30 20:34",
+          "title": "Vehicle Enters Storage Unit",
+          "description": "WB-99-TEST-204 enters East Dock Storage Unit 4.",
+          "type": "SURVEILLANCE",
+          "relatedEntities": [
+            "ENT-12",
+            "ENT-9"
+          ]
+        },
+        {
+          "id": "T-005",
+          "timestamp": "2026-08-30 20:41",
+          "title": "Neel Arora Meets Ravi Sen",
+          "description": "Neel Arora meets Ravi Sen near the storage facility.",
+          "type": "SURVEILLANCE",
+          "relatedEntities": [
+            "ENT-4",
+            "ENT-3",
+            "ENT-9"
+          ]
+        },
+        {
+          "id": "T-006",
+          "timestamp": "2026-08-30 21:02",
+          "title": "Phone Call Between Suspects",
+          "description": "A 176-second call occurs between +91-90000-10092 and +91-90000-10093.",
+          "type": "COMMUNICATION",
+          "relatedEntities": [
+            "ENT-14",
+            "ENT-13"
+          ]
+        },
+        {
+          "id": "T-007",
+          "timestamp": "2026-08-30 21:24",
+          "title": "Vehicle Leaves Storage Unit",
+          "description": "WB-99-TEST-204 leaves East Dock Storage Unit 4.",
+          "type": "SURVEILLANCE",
+          "relatedEntities": [
+            "ENT-12",
+            "ENT-9"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "EV-001",
+          "title": "Primary FIR Dossier — money_laundering_CASE-0091.pdf",
+          "type": "DOCUMENT",
+          "source": "Supabase Vault // FIR",
+          "dateAdded": "2026-08-31",
+          "linkedEntities": [
+            "ENT-1",
+            "ENT-2",
+            "ENT-3",
+            "ENT-4"
+          ],
+          "description": "Verified intelligence payload (money_laundering_CASE-0091.pdf). Stored at cases/CASE-0090/FIR/SRC-df4e32e1-money_laundering_CASE-0091.pdf with forensic hash."
+        },
+        {
+          "id": "EV-002",
+          "title": "Citation: 5. Evidence",
+          "type": "DOCUMENT",
+          "source": "money_laundering_CASE-0091.pdf",
+          "dateAdded": "2026-08-31",
+          "linkedEntities": [
+            "ENT-15",
+            "ENT-16"
+          ],
+          "description": "\"fictional bank ledger confirming the INR 485,000 transfer.\" — Confirms financial transaction details."
+        },
+        {
+          "id": "EV-003",
+          "title": "Citation: 5. Evidence",
+          "type": "DOCUMENT",
+          "source": "money_laundering_CASE-0091.pdf",
+          "dateAdded": "2026-08-31",
+          "linkedEntities": [
+            "ENT-12",
+            "ENT-9"
+          ],
+          "description": "\"fictional surveillance image description identifying WB-99-TEST-204 at East Dock.\" — Corroborates vehicle presence at key location."
+        },
+        {
+          "id": "EV-004",
+          "title": "Citation: 5. Evidence",
+          "type": "DOCUMENT",
+          "source": "money_laundering_CASE-0091.pdf",
+          "dateAdded": "2026-08-31",
+          "linkedEntities": [
+            "ENT-4",
+            "ENT-9"
+          ],
+          "description": "\"fictional access log linking Neel Arora to Storage Unit 4.\" — Establishes Neel Arora's operational link to the storage facility."
+        },
+        {
+          "id": "EV-005",
+          "title": "Citation: 5. Evidence",
+          "type": "DOCUMENT",
+          "source": "money_laundering_CASE-0091.pdf",
+          "dateAdded": "2026-08-31",
+          "linkedEntities": [
+            "ENT-14",
+            "ENT-13"
+          ],
+          "description": "\"fictional call-detail record documenting the 176-second call between +91-90000-10092 and +91-90000-10093.\" — Confirms communication between associated phone numbers."
+        }
+      ],
+      "alerts": [
+        {
+          "id": "ALT-001",
+          "title": "New High-Risk Intermediary Identified",
+          "description": "Neel Arora, identified as the operator of East Dock Storage Unit 4 and linked to a suspicious phone number, appears to be a key new player in the network, coordinating logistics and communications.",
+          "severity": "CRITICAL",
+          "status": "NEW",
+          "timestamp": "Just now"
+        },
+        {
+          "id": "ALT-003",
+          "title": "Coordinated Logistics and Financial Activity",
+          "description": "A significant financial transfer to an account linked to Northstar Logistics Ltd. is followed by coordinated movements of Northstar personnel (Ravi Sen) and vehicles (WB-99-TEST-204) to a new storage facility (East Dock Storage Unit 4) operated by Neel Arora.",
+          "severity": "CRITICAL",
+          "status": "NEW",
+          "timestamp": "Just now"
+        },
+        {
+          "id": "ALT-005",
+          "title": "Suspicious Communication Pattern",
+          "description": "A direct, timed phone call between a number associated with Neel Arora (+91-90000-10093) and an unknown number (+91-90000-10092) occurred shortly after a meeting between Arora and Ravi Sen at the storage facility.",
+          "severity": "WARNING",
+          "status": "NEW",
+          "timestamp": "Just now"
+        }
+      ],
+      "aiMessages": [
+        {
+          "id": "M-001",
+          "role": "ai",
+          "content": "**Case Initialized from FIR**: Money laundering\n\nThe newly identified individual, Neel Arora, operating East Dock Storage Unit 4, appears to be a critical intermediary in the coordinated movement of goods and communications, potentially serving as a central coordinator for logistics and storage operations linked to the financial fraud.\n\nIndexed 16 entities, 7 timeline occurrences, and 5 evidence references.",
+          "timestamp": "Just now"
+        }
+      ]
+    }
+  ],
+  "networks": [],
+  "entities": [
+    {
+      "id": "ENT-16",
+      "name": "NL-TEST-7712",
+      "type": "ACCOUNT",
+      "riskScore": 85,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "FLAGGED"
+    },
+    {
+      "id": "ENT-15",
+      "name": "ML-TEST-4401",
+      "type": "ACCOUNT",
+      "riskScore": 80,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "FLAGGED"
+    },
+    {
+      "id": "ENT-14",
+      "name": "+91-90000-10092",
+      "type": "PHONE",
+      "riskScore": 70,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "MONITORING"
+    },
+    {
+      "id": "ENT-13",
+      "name": "+91-90000-10093",
+      "type": "PHONE",
+      "riskScore": 80,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "FLAGGED"
+    },
+    {
+      "id": "ENT-12",
+      "name": "WB-99-TEST-204",
+      "type": "VEHICLE",
+      "riskScore": 70,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "MONITORING"
+    },
+    {
+      "id": "ENT-11",
+      "name": "WB-99-TEST-091",
+      "type": "VEHICLE",
+      "riskScore": 60,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "MONITORING"
+    },
+    {
+      "id": "ENT-10",
+      "name": "Meridian Warehouse",
+      "type": "LOCATION",
+      "riskScore": 50,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "MONITORING"
+    },
+    {
+      "id": "ENT-9",
+      "name": "East Dock Storage Unit 4",
+      "type": "LOCATION",
+      "riskScore": 80,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "FLAGGED"
+    },
+    {
+      "id": "ENT-8",
+      "name": "Meridian Economic Offences Cell",
+      "type": "ORGANIZATION",
+      "riskScore": 0,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "CLEARED"
+    },
+    {
+      "id": "ENT-7",
+      "name": "Meridian Cooperative Bank",
+      "type": "ORGANIZATION",
+      "riskScore": 40,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "MONITORING"
+    },
+    {
+      "id": "ENT-6",
+      "name": "Meridian Ledger Services",
+      "type": "ORGANIZATION",
+      "riskScore": 20,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "CLEARED"
+    },
+    {
+      "id": "ENT-5",
+      "name": "Northstar Logistics Ltd.",
+      "type": "ORGANIZATION",
+      "riskScore": 75,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "FLAGGED"
+    },
+    {
+      "id": "ENT-4",
+      "name": "Neel Arora",
+      "type": "PERSON",
+      "riskScore": 85,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "FLAGGED"
+    },
+    {
+      "id": "ENT-3",
+      "name": "Ravi Sen",
+      "type": "PERSON",
+      "riskScore": 70,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "MONITORING"
+    },
+    {
+      "id": "ENT-2",
+      "name": "Diana Holt",
+      "type": "PERSON",
+      "riskScore": 30,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "CLEARED"
+    },
+    {
+      "id": "ENT-1",
+      "name": "Marcus Vale",
+      "type": "PERSON",
+      "riskScore": 30,
+      "cases": [
+        "CASE-0090"
+      ],
+      "lastSeen": "2026-08-31",
+      "status": "CLEARED"
+    }
+  ],
+  "alerts": [
+    {
+      "id": "ALT-005",
+      "title": "Suspicious Communication Pattern",
+      "description": "A direct, timed phone call between a number associated with Neel Arora (+91-90000-10093) and an unknown number (+91-90000-10092) occurred shortly after a meeting between Arora and Ravi Sen at the storage facility.",
+      "severity": "WARNING",
+      "status": "NEW",
+      "caseId": "CASE-0090",
+      "timestamp": "Just now"
+    },
+    {
+      "id": "ALT-003",
+      "title": "Coordinated Logistics and Financial Activity",
+      "description": "A significant financial transfer to an account linked to Northstar Logistics Ltd. is followed by coordinated movements of Northstar personnel (Ravi Sen) and vehicles (WB-99-TEST-204) to a new storage facility (East Dock Storage Unit 4) operated by Neel Arora.",
+      "severity": "CRITICAL",
+      "status": "NEW",
+      "caseId": "CASE-0090",
+      "timestamp": "Just now"
+    },
+    {
+      "id": "ALT-001",
+      "title": "New High-Risk Intermediary Identified",
+      "description": "Neel Arora, identified as the operator of East Dock Storage Unit 4 and linked to a suspicious phone number, appears to be a key new player in the network, coordinating logistics and communications.",
+      "severity": "CRITICAL",
+      "status": "NEW",
+      "caseId": "CASE-0090",
+      "timestamp": "Just now"
+    }
+  ],
+  "dataSources": [
+    {
+      "id": "DS-001",
+      "name": "CDRS Feed",
+      "type": "Telecommunications",
+      "status": "SYNCED",
+      "latency": "38ms",
+      "records": "0",
+      "lastSync": "Just now"
+    },
+    {
+      "id": "DS-002",
+      "name": "Financial Transaction Log",
+      "type": "Banking",
+      "status": "SYNCED",
+      "latency": "55ms",
+      "records": "0",
+      "lastSync": "Just now"
+    },
+    {
+      "id": "DS-003",
+      "name": "Surveillance CCTV Index",
+      "type": "Physical Surveillance",
+      "status": "SYNCED",
+      "latency": "112ms",
+      "records": "0",
+      "lastSync": "Just now"
+    },
+    {
+      "id": "DS-004",
+      "name": "FIR Database",
+      "type": "Law Enforcement",
+      "status": "SYNCED",
+      "latency": "29ms",
+      "records": "0",
+      "lastSync": "Just now"
+    },
+    {
+      "id": "DS-005",
+      "name": "Social Media Harvest",
+      "type": "OSINT",
+      "status": "SYNCED",
+      "latency": "—",
+      "records": "0",
+      "lastSync": "Just now"
+    },
+    {
+      "id": "DS-006",
+      "name": "Customs & Immigration",
+      "type": "Border Control",
+      "status": "SYNCED",
+      "latency": "76ms",
+      "records": "0",
+      "lastSync": "Just now"
+    }
+  ],
+  "settings": {
+    "preferences": {
+      "alertNotifications": true,
+      "autoSyncDataSources": true,
+      "crossCaseEntityMatching": true,
+      "sessionTimeout": false
+    },
+    "operator": {
+      "clearanceLevel": "LEVEL 3 — RESTRICTED",
+      "accessRole": "LEAD INVESTIGATOR",
+      "jurisdiction": "NATIONAL — ALL ZONES",
+      "sessionToken": "SYS-TOKEN-••••••••••••"
+    }
+  },
+  "activityLogs": []
+}

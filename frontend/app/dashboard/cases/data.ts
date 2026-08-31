@@ -2,10 +2,28 @@
 
 export type Priority = "HIGH" | "MEDIUM" | "LOW";
 export type CaseStatus = "ACTIVE" | "CLOSED" | "PENDING";
-export type EntityType = "PERSON" | "ORGANIZATION" | "LOCATION" | "PHONE" | "ACCOUNT";
+export type EntityType =
+  | "PERSON"
+  | "ORGANIZATION"
+  | "LOCATION"
+  | "PHONE"
+  | "ACCOUNT"
+  | "VEHICLE";
 export type EntityStatus = "FLAGGED" | "MONITORING" | "CLEARED";
-export type TimelineEventType = "SURVEILLANCE" | "FINANCIAL" | "COMMUNICATION" | "ARREST" | "INTEL" | "SYSTEM";
-export type EvidenceType = "DOCUMENT" | "FINANCIAL_RECORD" | "COMMUNICATION" | "MEDIA" | "PHYSICAL";
+
+export type TimelineEventType =
+  | "SURVEILLANCE"
+  | "FINANCIAL"
+  | "COMMUNICATION"
+  | "ARREST"
+  | "INTEL"
+  | "SYSTEM";
+export type EvidenceType =
+  | "DOCUMENT"
+  | "FINANCIAL_RECORD"
+  | "COMMUNICATION"
+  | "MEDIA"
+  | "PHYSICAL";
 export type AlertSeverity = "CRITICAL" | "WARNING" | "INFO";
 export type AlertStatus = "NEW" | "ACKNOWLEDGED" | "RESOLVED";
 
@@ -118,30 +136,88 @@ const CASE_0091: CaseDetail = {
     category: "NETWORK CENTRALITY",
   },
   networks: [
-    { id: "NET-001", name: "Black Web Core Ring", nodes: 43, edges: 118, riskLevel: "CRITICAL" },
-    { id: "NET-002", name: "Courier Sub-Network", nodes: 12, edges: 29, riskLevel: "HIGH" },
+    {
+      id: "NET-001",
+      name: "Black Web Core Ring",
+      nodes: 43,
+      edges: 118,
+      riskLevel: "CRITICAL",
+    },
+    {
+      id: "NET-002",
+      name: "Courier Sub-Network",
+      nodes: 12,
+      edges: 29,
+      riskLevel: "HIGH",
+    },
   ],
   entities: [
-    { id: "E-1482", name: "Arjun Rawat", alias: "AJ", type: "PERSON", riskScore: 94, status: "FLAGGED", lastSeen: "2026-08-29" },
-    { id: "E-0774", name: "Rajan Mehra", alias: "The Broker", type: "PERSON", riskScore: 91, status: "FLAGGED", lastSeen: "2026-08-28" },
-    { id: "E-0941", name: "+91-98765-43210", type: "PHONE", riskScore: 62, status: "MONITORING", lastSeen: "2026-08-25" },
-    { id: "E-1188", name: "Shadow Vault Ltd.", type: "ORGANIZATION", riskScore: 85, status: "FLAGGED", lastSeen: "2026-08-27" },
-    { id: "E-1340", name: "BTC Wallet 0x4f8...c3a", type: "ACCOUNT", riskScore: 77, status: "MONITORING", lastSeen: "2026-08-26" },
-    { id: "E-0610", name: "Amritsar Warehouse, Block 4", type: "LOCATION", riskScore: 78, status: "MONITORING", lastSeen: "2026-08-22" },
+    {
+      id: "E-1482",
+      name: "Arjun Rawat",
+      alias: "AJ",
+      type: "PERSON",
+      riskScore: 94,
+      status: "FLAGGED",
+      lastSeen: "2026-08-29",
+    },
+    {
+      id: "E-0774",
+      name: "Rajan Mehra",
+      alias: "The Broker",
+      type: "PERSON",
+      riskScore: 91,
+      status: "FLAGGED",
+      lastSeen: "2026-08-28",
+    },
+    {
+      id: "E-0941",
+      name: "+91-98765-43210",
+      type: "PHONE",
+      riskScore: 62,
+      status: "MONITORING",
+      lastSeen: "2026-08-25",
+    },
+    {
+      id: "E-1188",
+      name: "Shadow Vault Ltd.",
+      type: "ORGANIZATION",
+      riskScore: 85,
+      status: "FLAGGED",
+      lastSeen: "2026-08-27",
+    },
+    {
+      id: "E-1340",
+      name: "BTC Wallet 0x4f8...c3a",
+      type: "ACCOUNT",
+      riskScore: 77,
+      status: "MONITORING",
+      lastSeen: "2026-08-26",
+    },
+    {
+      id: "E-0610",
+      name: "Amritsar Warehouse, Block 4",
+      type: "LOCATION",
+      riskScore: 78,
+      status: "MONITORING",
+      lastSeen: "2026-08-22",
+    },
   ],
   timeline: [
     {
       id: "T-001",
       timestamp: "2026-07-14 09:00",
       title: "Case Opened",
-      description: "Initial intelligence received from CDRS analysis. Case file created and assigned to Agent Sharma.",
+      description:
+        "Initial intelligence received from CDRS analysis. Case file created and assigned to Agent Sharma.",
       type: "SYSTEM",
     },
     {
       id: "T-002",
       timestamp: "2026-07-18 14:32",
       title: "First Surveillance Contact",
-      description: "Physical surveillance team established visual on Arjun Rawat (E-1482) at Amritsar Warehouse, Block 4.",
+      description:
+        "Physical surveillance team established visual on Arjun Rawat (E-1482) at Amritsar Warehouse, Block 4.",
       type: "SURVEILLANCE",
       relatedEntities: ["E-1482", "E-0610"],
     },
@@ -149,7 +225,8 @@ const CASE_0091: CaseDetail = {
       id: "T-003",
       timestamp: "2026-07-24 11:15",
       title: "Cryptocurrency Trace Initiated",
-      description: "Blockchain analysis unit flagged BTC Wallet 0x4f8...c3a with ₹2.1CR in unattributed inflows over 30 days.",
+      description:
+        "Blockchain analysis unit flagged BTC Wallet 0x4f8...c3a with ₹2.1CR in unattributed inflows over 30 days.",
       type: "FINANCIAL",
       relatedEntities: ["E-1340"],
     },
@@ -157,7 +234,8 @@ const CASE_0091: CaseDetail = {
       id: "T-004",
       timestamp: "2026-08-02 08:44",
       title: "Communication Intercept",
-      description: "Encrypted communication between E-1482 and E-0774 intercepted. Content partially decoded — references to 'shipment D4'.",
+      description:
+        "Encrypted communication between E-1482 and E-0774 intercepted. Content partially decoded — references to 'shipment D4'.",
       type: "COMMUNICATION",
       relatedEntities: ["E-1482", "E-0774"],
     },
@@ -165,7 +243,8 @@ const CASE_0091: CaseDetail = {
       id: "T-005",
       timestamp: "2026-08-10 19:20",
       title: "Shadow Vault Ltd. Flagged",
-      description: "Financial intelligence links Shadow Vault Ltd. to three shell companies receiving transfers from flagged accounts.",
+      description:
+        "Financial intelligence links Shadow Vault Ltd. to three shell companies receiving transfers from flagged accounts.",
       type: "FINANCIAL",
       relatedEntities: ["E-1188"],
     },
@@ -173,7 +252,8 @@ const CASE_0091: CaseDetail = {
       id: "T-006",
       timestamp: "2026-08-17 03:15",
       title: "Intel: Supplier Identity",
-      description: "Source DELTA-7 confirms Rajan Mehra (E-0774) is acting as primary coordinator between dark web marketplace and physical distribution network.",
+      description:
+        "Source DELTA-7 confirms Rajan Mehra (E-0774) is acting as primary coordinator between dark web marketplace and physical distribution network.",
       type: "INTEL",
       relatedEntities: ["E-0774"],
     },
@@ -181,7 +261,8 @@ const CASE_0091: CaseDetail = {
       id: "T-007",
       timestamp: "2026-08-22 16:00",
       title: "Network Anomaly Detected",
-      description: "Automated system flagged unusual spike in connections from E-1482. Three new previously unknown nodes identified.",
+      description:
+        "Automated system flagged unusual spike in connections from E-1482. Three new previously unknown nodes identified.",
       type: "SYSTEM",
       relatedEntities: ["E-1482"],
     },
@@ -189,7 +270,8 @@ const CASE_0091: CaseDetail = {
       id: "T-008",
       timestamp: "2026-08-29 13:48",
       title: "High Priority Alert Triggered",
-      description: "Network topology engine detected new cross-border connection. Alert escalated to lead investigator.",
+      description:
+        "Network topology engine detected new cross-border connection. Alert escalated to lead investigator.",
       type: "SURVEILLANCE",
     },
   ],
@@ -201,7 +283,8 @@ const CASE_0091: CaseDetail = {
       source: "CDRS Feed – DS-001",
       dateAdded: "2026-07-20",
       linkedEntities: ["E-1482", "E-0941"],
-      description: "28 days of call detail records showing communication pattern between key entities.",
+      description:
+        "28 days of call detail records showing communication pattern between key entities.",
     },
     {
       id: "EV-002",
@@ -210,7 +293,8 @@ const CASE_0091: CaseDetail = {
       source: "Blockchain Analysis Unit",
       dateAdded: "2026-07-25",
       linkedEntities: ["E-1340", "E-1188"],
-      description: "Cryptocurrency transaction ledger with ₹2.1CR unattributed inflows flagged.",
+      description:
+        "Cryptocurrency transaction ledger with ₹2.1CR unattributed inflows flagged.",
     },
     {
       id: "EV-003",
@@ -219,7 +303,8 @@ const CASE_0091: CaseDetail = {
       source: "CCTV Index – DS-003",
       dateAdded: "2026-07-19",
       linkedEntities: ["E-1482", "E-0610"],
-      description: "72 hours of footage capturing entity movement at Warehouse Block 4.",
+      description:
+        "72 hours of footage capturing entity movement at Warehouse Block 4.",
     },
     {
       id: "EV-004",
@@ -228,7 +313,8 @@ const CASE_0091: CaseDetail = {
       source: "SIGINT Unit",
       dateAdded: "2026-08-03",
       linkedEntities: ["E-1482", "E-0774"],
-      description: "Partially decoded encrypted communication referencing 'shipment D4' and delivery coordinates.",
+      description:
+        "Partially decoded encrypted communication referencing 'shipment D4' and delivery coordinates.",
     },
     {
       id: "EV-005",
@@ -237,7 +323,8 @@ const CASE_0091: CaseDetail = {
       source: "MCA Registry",
       dateAdded: "2026-08-11",
       linkedEntities: ["E-1188"],
-      description: "Company incorporation documents listing E-0774 as a silent director via nominee arrangement.",
+      description:
+        "Company incorporation documents listing E-0774 as a silent director via nominee arrangement.",
     },
     {
       id: "EV-006",
@@ -246,14 +333,16 @@ const CASE_0091: CaseDetail = {
       source: "Field Team ALPHA",
       dateAdded: "2026-08-20",
       linkedEntities: ["E-0610"],
-      description: "Physical evidence collected from Amritsar Warehouse – 4.2kg controlled substance, forensic analysis pending.",
+      description:
+        "Physical evidence collected from Amritsar Warehouse – 4.2kg controlled substance, forensic analysis pending.",
     },
   ],
   alerts: [
     {
       id: "ALT-0091",
       title: "Network anomaly detected",
-      description: "Unusual spike in connection requests from entity E-1482 across 3 nodes in cluster B. Possible lateral movement.",
+      description:
+        "Unusual spike in connection requests from entity E-1482 across 3 nodes in cluster B. Possible lateral movement.",
       severity: "CRITICAL",
       status: "NEW",
       timestamp: "2026-08-29 13:48 UTC",
@@ -261,7 +350,8 @@ const CASE_0091: CaseDetail = {
     {
       id: "ALT-0090",
       title: "High-risk entity flagged",
-      description: "Entity E-0774 matched against cross-case correlation engine. Appears in 3 active cases.",
+      description:
+        "Entity E-0774 matched against cross-case correlation engine. Appears in 3 active cases.",
       severity: "CRITICAL",
       status: "NEW",
       timestamp: "2026-08-29 13:21 UTC",
@@ -269,7 +359,8 @@ const CASE_0091: CaseDetail = {
     {
       id: "ALT-0088",
       title: "New connection established",
-      description: "Previously unknown entity added connection to Rajan Mehra (E-0774). Entity ID pending assignment.",
+      description:
+        "Previously unknown entity added connection to Rajan Mehra (E-0774). Entity ID pending assignment.",
       severity: "WARNING",
       status: "ACKNOWLEDGED",
       timestamp: "2026-08-29 11:44 UTC",
@@ -277,7 +368,8 @@ const CASE_0091: CaseDetail = {
     {
       id: "ALT-0085",
       title: "Crypto wallet activity",
-      description: "BTC Wallet 0x4f8...c3a recorded outbound transaction of ₹0.8CR to unknown address.",
+      description:
+        "BTC Wallet 0x4f8...c3a recorded outbound transaction of ₹0.8CR to unknown address.",
       severity: "WARNING",
       status: "ACKNOWLEDGED",
       timestamp: "2026-08-28 22:30 UTC",
@@ -285,7 +377,8 @@ const CASE_0091: CaseDetail = {
     {
       id: "ALT-0081",
       title: "CDRS sync gap resolved",
-      description: "18-minute data gap in CDRS feed now recovered. No records missing.",
+      description:
+        "18-minute data gap in CDRS feed now recovered. No records missing.",
       severity: "INFO",
       status: "RESOLVED",
       timestamp: "2026-08-27 08:00 UTC",
@@ -321,7 +414,8 @@ const CASE_0092: CaseDetail = {
   name: "Financial Investigation – Offshore",
   status: "ACTIVE",
   priority: "MEDIUM",
-  description: "Suspected money laundering via shell companies. Offshore accounts flagged in 3 jurisdictions.",
+  description:
+    "Suspected money laundering via shell companies. Offshore accounts flagged in 3 jurisdictions.",
   brief:
     "A financial intelligence unit flagged Nexus Trade Pvt. Ltd. for structuring transactions to avoid reporting thresholds. Subsequent investigation revealed a network of 4 shell companies receiving transfers from flagged accounts across Mauritius, UAE, and Singapore. The case involves 18 entities with a total of ₹14.7CR in suspicious transactions.",
   investigator: "AGENT KAPOOR",
@@ -335,33 +429,121 @@ const CASE_0092: CaseDetail = {
   evidenceCount: 12,
   alertCount: 2,
   aiAssessment: {
-    finding: "Nexus Trade Pvt. Ltd. (E-1301) displays layering patterns consistent with the integration phase of money laundering — 87% confidence.",
+    finding:
+      "Nexus Trade Pvt. Ltd. (E-1301) displays layering patterns consistent with the integration phase of money laundering — 87% confidence.",
     confidence: 87,
     category: "FINANCIAL PATTERN",
   },
   networks: [
-    { id: "NET-003", name: "Offshore Finance Cluster", nodes: 18, edges: 41, riskLevel: "HIGH" },
+    {
+      id: "NET-003",
+      name: "Offshore Finance Cluster",
+      nodes: 18,
+      edges: 41,
+      riskLevel: "HIGH",
+    },
   ],
   entities: [
-    { id: "E-1301", name: "Nexus Trade Pvt. Ltd.", type: "ORGANIZATION", riskScore: 87, status: "FLAGGED", lastSeen: "2026-08-27" },
-    { id: "E-1155", name: "ACC-007742881", type: "ACCOUNT", riskScore: 83, status: "FLAGGED", lastSeen: "2026-08-26" },
-    { id: "E-1410", name: "Vikram Chadha", type: "PERSON", riskScore: 71, status: "MONITORING", lastSeen: "2026-08-24" },
+    {
+      id: "E-1301",
+      name: "Nexus Trade Pvt. Ltd.",
+      type: "ORGANIZATION",
+      riskScore: 87,
+      status: "FLAGGED",
+      lastSeen: "2026-08-27",
+    },
+    {
+      id: "E-1155",
+      name: "ACC-007742881",
+      type: "ACCOUNT",
+      riskScore: 83,
+      status: "FLAGGED",
+      lastSeen: "2026-08-26",
+    },
+    {
+      id: "E-1410",
+      name: "Vikram Chadha",
+      type: "PERSON",
+      riskScore: 71,
+      status: "MONITORING",
+      lastSeen: "2026-08-24",
+    },
   ],
   timeline: [
-    { id: "T-001", timestamp: "2026-08-01 10:00", title: "Case Opened", description: "FIU referral received. Case opened by Agent Kapoor.", type: "SYSTEM" },
-    { id: "T-002", timestamp: "2026-08-05 14:00", title: "Account Flagged", description: "ACC-007742881 flagged for ₹4.2CR transaction to offshore entity.", type: "FINANCIAL", relatedEntities: ["E-1155"] },
-    { id: "T-003", timestamp: "2026-08-14 11:30", title: "Shell Company Identified", description: "Nexus Trade Pvt. Ltd. linked to 3 overseas shell companies via beneficial ownership analysis.", type: "INTEL", relatedEntities: ["E-1301"] },
+    {
+      id: "T-001",
+      timestamp: "2026-08-01 10:00",
+      title: "Case Opened",
+      description: "FIU referral received. Case opened by Agent Kapoor.",
+      type: "SYSTEM",
+    },
+    {
+      id: "T-002",
+      timestamp: "2026-08-05 14:00",
+      title: "Account Flagged",
+      description:
+        "ACC-007742881 flagged for ₹4.2CR transaction to offshore entity.",
+      type: "FINANCIAL",
+      relatedEntities: ["E-1155"],
+    },
+    {
+      id: "T-003",
+      timestamp: "2026-08-14 11:30",
+      title: "Shell Company Identified",
+      description:
+        "Nexus Trade Pvt. Ltd. linked to 3 overseas shell companies via beneficial ownership analysis.",
+      type: "INTEL",
+      relatedEntities: ["E-1301"],
+    },
   ],
   evidence: [
-    { id: "EV-001", title: "FIU Referral Report", type: "DOCUMENT", source: "Financial Intelligence Unit", dateAdded: "2026-08-01", linkedEntities: ["E-1301"], description: "Initial referral citing suspicious transaction patterns." },
-    { id: "EV-002", title: "Bank Statement – ACC-007742881", type: "FINANCIAL_RECORD", source: "Financial Transaction Log – DS-002", dateAdded: "2026-08-06", linkedEntities: ["E-1155"], description: "6 months of statements showing structuring behavior." },
+    {
+      id: "EV-001",
+      title: "FIU Referral Report",
+      type: "DOCUMENT",
+      source: "Financial Intelligence Unit",
+      dateAdded: "2026-08-01",
+      linkedEntities: ["E-1301"],
+      description: "Initial referral citing suspicious transaction patterns.",
+    },
+    {
+      id: "EV-002",
+      title: "Bank Statement – ACC-007742881",
+      type: "FINANCIAL_RECORD",
+      source: "Financial Transaction Log – DS-002",
+      dateAdded: "2026-08-06",
+      linkedEntities: ["E-1155"],
+      description: "6 months of statements showing structuring behavior.",
+    },
   ],
   alerts: [
-    { id: "ALT-0089", title: "Financial spike – offshore account", description: "ACC-007742881 logged ₹4.2CR transaction to unidentified offshore entity.", severity: "WARNING", status: "ACKNOWLEDGED", timestamp: "2026-08-29 12:05 UTC" },
-    { id: "ALT-0086", title: "New shell company linked", description: "Fourth shell company identified in Singapore via beneficial ownership trace.", severity: "INFO", status: "RESOLVED", timestamp: "2026-08-25 09:00 UTC" },
+    {
+      id: "ALT-0089",
+      title: "Financial spike – offshore account",
+      description:
+        "ACC-007742881 logged ₹4.2CR transaction to unidentified offshore entity.",
+      severity: "WARNING",
+      status: "ACKNOWLEDGED",
+      timestamp: "2026-08-29 12:05 UTC",
+    },
+    {
+      id: "ALT-0086",
+      title: "New shell company linked",
+      description:
+        "Fourth shell company identified in Singapore via beneficial ownership trace.",
+      severity: "INFO",
+      status: "RESOLVED",
+      timestamp: "2026-08-25 09:00 UTC",
+    },
   ],
   aiMessages: [
-    { id: "M-001", role: "ai", content: "**Financial Pattern Analysis**\n\nThe transaction structure observed in CASE-0092 is consistent with the layering phase of money laundering. Nexus Trade Pvt. Ltd. is receiving multiple sub-threshold transfers (structuring) before routing consolidated amounts to offshore accounts.\n\nRisk score: **87/100 — HIGH**", timestamp: "2026-08-29 10:00" },
+    {
+      id: "M-001",
+      role: "ai",
+      content:
+        "**Financial Pattern Analysis**\n\nThe transaction structure observed in CASE-0092 is consistent with the layering phase of money laundering. Nexus Trade Pvt. Ltd. is receiving multiple sub-threshold transfers (structuring) before routing consolidated amounts to offshore accounts.\n\nRisk score: **87/100 — HIGH**",
+      timestamp: "2026-08-29 10:00",
+    },
   ],
 };
 
@@ -370,11 +552,18 @@ const CASE_0088: CaseDetail = {
   name: "Narco Supply Route – Punjab",
   status: "ACTIVE",
   priority: "HIGH",
-  description: "Cross-border narcotics supply chain spanning Pakistan border. 76 entities identified in transit network.",
+  description:
+    "Cross-border narcotics supply chain spanning Pakistan border. 76 entities identified in transit network.",
   brief:
     "A large-scale narcotics trafficking operation using a cross-border supply route from Pakistan through Punjab into Delhi and beyond. The network employs mule couriers, warehouses, and encrypted communications. 76 entities have been identified across 8 distinct network clusters. The operation is believed to generate ₹50CR+ annually.",
   investigator: "AGENT MEHTA",
-  team: ["AGENT MEHTA", "AGENT SINGH", "AGENT VERMA", "ANALYST SHARMA", "ANALYST PATEL"],
+  team: [
+    "AGENT MEHTA",
+    "AGENT SINGH",
+    "AGENT VERMA",
+    "ANALYST SHARMA",
+    "ANALYST PATEL",
+  ],
   opened: "2026-06-20",
   updated: "12h ago",
   jurisdiction: "NATIONAL — PB, HR, UP, DL",
@@ -384,40 +573,181 @@ const CASE_0088: CaseDetail = {
   evidenceCount: 41,
   alertCount: 3,
   aiAssessment: {
-    finding: "The Punjab transit corridor has 3 distinct supply chain tiers. Disrupting the mid-tier (5 identified entities) would isolate 34% of downstream nodes — highest leverage point.",
+    finding:
+      "The Punjab transit corridor has 3 distinct supply chain tiers. Disrupting the mid-tier (5 identified entities) would isolate 34% of downstream nodes — highest leverage point.",
     confidence: 88,
     category: "SUPPLY CHAIN TOPOLOGY",
   },
   networks: [
-    { id: "NET-004", name: "Punjab Transit Corridor", nodes: 76, edges: 203, riskLevel: "CRITICAL" },
-    { id: "NET-005", name: "Courier Cell Alpha", nodes: 14, edges: 31, riskLevel: "HIGH" },
-    { id: "NET-006", name: "Storage Network", nodes: 9, edges: 18, riskLevel: "HIGH" },
+    {
+      id: "NET-004",
+      name: "Punjab Transit Corridor",
+      nodes: 76,
+      edges: 203,
+      riskLevel: "CRITICAL",
+    },
+    {
+      id: "NET-005",
+      name: "Courier Cell Alpha",
+      nodes: 14,
+      edges: 31,
+      riskLevel: "HIGH",
+    },
+    {
+      id: "NET-006",
+      name: "Storage Network",
+      nodes: 9,
+      edges: 18,
+      riskLevel: "HIGH",
+    },
   ],
   entities: [
-    { id: "E-1482", name: "Arjun Rawat", alias: "AJ", type: "PERSON", riskScore: 94, status: "FLAGGED", lastSeen: "2026-08-29" },
-    { id: "E-0774", name: "Rajan Mehra", alias: "The Broker", type: "PERSON", riskScore: 91, status: "FLAGGED", lastSeen: "2026-08-28" },
-    { id: "E-0822", name: "Patel Logistics", type: "ORGANIZATION", riskScore: 55, status: "MONITORING", lastSeen: "2026-08-20" },
-    { id: "E-0610", name: "Amritsar Warehouse, Block 4", type: "LOCATION", riskScore: 78, status: "MONITORING", lastSeen: "2026-08-22" },
+    {
+      id: "E-1482",
+      name: "Arjun Rawat",
+      alias: "AJ",
+      type: "PERSON",
+      riskScore: 94,
+      status: "FLAGGED",
+      lastSeen: "2026-08-29",
+    },
+    {
+      id: "E-0774",
+      name: "Rajan Mehra",
+      alias: "The Broker",
+      type: "PERSON",
+      riskScore: 91,
+      status: "FLAGGED",
+      lastSeen: "2026-08-28",
+    },
+    {
+      id: "E-0822",
+      name: "Patel Logistics",
+      type: "ORGANIZATION",
+      riskScore: 55,
+      status: "MONITORING",
+      lastSeen: "2026-08-20",
+    },
+    {
+      id: "E-0610",
+      name: "Amritsar Warehouse, Block 4",
+      type: "LOCATION",
+      riskScore: 78,
+      status: "MONITORING",
+      lastSeen: "2026-08-22",
+    },
   ],
   timeline: [
-    { id: "T-001", timestamp: "2026-06-20 08:00", title: "Case Opened", description: "Border intelligence flagged unusual vehicle movement at Wagah crossing. Case file created.", type: "SYSTEM" },
-    { id: "T-002", timestamp: "2026-06-28 03:45", title: "First Interception", description: "Customs intercepted a vehicle linked to Patel Logistics carrying concealed narcotics.", type: "ARREST", relatedEntities: ["E-0822"] },
-    { id: "T-003", timestamp: "2026-07-15 11:00", title: "Warehouse Identified", description: "Surveillance confirms Amritsar Warehouse Block 4 as transit storage point.", type: "SURVEILLANCE", relatedEntities: ["E-0610"] },
-    { id: "T-004", timestamp: "2026-08-22 16:00", title: "Physical Evidence Seized", description: "Field team collected 4.2kg controlled substance from warehouse during raid.", type: "ARREST", relatedEntities: ["E-0610"] },
+    {
+      id: "T-001",
+      timestamp: "2026-06-20 08:00",
+      title: "Case Opened",
+      description:
+        "Border intelligence flagged unusual vehicle movement at Wagah crossing. Case file created.",
+      type: "SYSTEM",
+    },
+    {
+      id: "T-002",
+      timestamp: "2026-06-28 03:45",
+      title: "First Interception",
+      description:
+        "Customs intercepted a vehicle linked to Patel Logistics carrying concealed narcotics.",
+      type: "ARREST",
+      relatedEntities: ["E-0822"],
+    },
+    {
+      id: "T-003",
+      timestamp: "2026-07-15 11:00",
+      title: "Warehouse Identified",
+      description:
+        "Surveillance confirms Amritsar Warehouse Block 4 as transit storage point.",
+      type: "SURVEILLANCE",
+      relatedEntities: ["E-0610"],
+    },
+    {
+      id: "T-004",
+      timestamp: "2026-08-22 16:00",
+      title: "Physical Evidence Seized",
+      description:
+        "Field team collected 4.2kg controlled substance from warehouse during raid.",
+      type: "ARREST",
+      relatedEntities: ["E-0610"],
+    },
   ],
   evidence: [
-    { id: "EV-001", title: "Customs Seizure Report – June 28", type: "PHYSICAL", source: "Customs & Immigration – DS-006", dateAdded: "2026-06-29", linkedEntities: ["E-0822"], description: "Official seizure report for intercepted vehicle." },
-    { id: "EV-002", title: "Warehouse Surveillance Footage", type: "MEDIA", source: "CCTV Index – DS-003", dateAdded: "2026-07-16", linkedEntities: ["E-0610", "E-1482"], description: "7 days of CCTV footage showing entity activity." },
-    { id: "EV-003", title: "Seized Narcotics Analysis", type: "PHYSICAL", source: "Forensics Lab", dateAdded: "2026-08-23", linkedEntities: ["E-0610"], description: "Lab analysis of 4.2kg seized substance — confirmed Class-A narcotic." },
+    {
+      id: "EV-001",
+      title: "Customs Seizure Report – June 28",
+      type: "PHYSICAL",
+      source: "Customs & Immigration – DS-006",
+      dateAdded: "2026-06-29",
+      linkedEntities: ["E-0822"],
+      description: "Official seizure report for intercepted vehicle.",
+    },
+    {
+      id: "EV-002",
+      title: "Warehouse Surveillance Footage",
+      type: "MEDIA",
+      source: "CCTV Index – DS-003",
+      dateAdded: "2026-07-16",
+      linkedEntities: ["E-0610", "E-1482"],
+      description: "7 days of CCTV footage showing entity activity.",
+    },
+    {
+      id: "EV-003",
+      title: "Seized Narcotics Analysis",
+      type: "PHYSICAL",
+      source: "Forensics Lab",
+      dateAdded: "2026-08-23",
+      linkedEntities: ["E-0610"],
+      description:
+        "Lab analysis of 4.2kg seized substance — confirmed Class-A narcotic.",
+    },
   ],
   alerts: [
-    { id: "ALT-0087", title: "Cross-case entity match", description: "Entity E-1482 found to share attributes with E-0774. Automated cross-case linking triggered.", severity: "INFO", status: "ACKNOWLEDGED", timestamp: "2026-08-29 10:30 UTC" },
-    { id: "ALT-0084", title: "New courier cell identified", description: "Intelligence suggests a new courier cell operating in Haryana, not previously mapped.", severity: "WARNING", status: "NEW", timestamp: "2026-08-28 15:00 UTC" },
-    { id: "ALT-0080", title: "Entity risk score elevated", description: "Patel Logistics risk score raised after new evidence linkage.", severity: "INFO", status: "RESOLVED", timestamp: "2026-08-28 18:00 UTC" },
+    {
+      id: "ALT-0087",
+      title: "Cross-case entity match",
+      description:
+        "Entity E-1482 found to share attributes with E-0774. Automated cross-case linking triggered.",
+      severity: "INFO",
+      status: "ACKNOWLEDGED",
+      timestamp: "2026-08-29 10:30 UTC",
+    },
+    {
+      id: "ALT-0084",
+      title: "New courier cell identified",
+      description:
+        "Intelligence suggests a new courier cell operating in Haryana, not previously mapped.",
+      severity: "WARNING",
+      status: "NEW",
+      timestamp: "2026-08-28 15:00 UTC",
+    },
+    {
+      id: "ALT-0080",
+      title: "Entity risk score elevated",
+      description:
+        "Patel Logistics risk score raised after new evidence linkage.",
+      severity: "INFO",
+      status: "RESOLVED",
+      timestamp: "2026-08-28 18:00 UTC",
+    },
   ],
   aiMessages: [
-    { id: "M-001", role: "ai", content: "**Supply Chain Analysis**\n\nThe Punjab narco network has a clear 3-tier structure: suppliers (border), distributors (mid-tier), and street-level cells. Mid-tier comprises 5 key entities. Disrupting this layer would isolate ~34% of downstream nodes and likely collapse Courier Cell Alpha.", timestamp: "2026-08-29 08:00" },
-    { id: "M-002", role: "ai", content: "**Suggested Action**\n\nPriority target: Patel Logistics (E-0822) is a mid-tier logistics coordinator. A financial freeze combined with 24h physical surveillance is recommended before the next anticipated shipment window (next 48–72h based on pattern analysis).", timestamp: "2026-08-29 08:01" },
+    {
+      id: "M-001",
+      role: "ai",
+      content:
+        "**Supply Chain Analysis**\n\nThe Punjab narco network has a clear 3-tier structure: suppliers (border), distributors (mid-tier), and street-level cells. Mid-tier comprises 5 key entities. Disrupting this layer would isolate ~34% of downstream nodes and likely collapse Courier Cell Alpha.",
+      timestamp: "2026-08-29 08:00",
+    },
+    {
+      id: "M-002",
+      role: "ai",
+      content:
+        "**Suggested Action**\n\nPriority target: Patel Logistics (E-0822) is a mid-tier logistics coordinator. A financial freeze combined with 24h physical surveillance is recommended before the next anticipated shipment window (next 48–72h based on pattern analysis).",
+      timestamp: "2026-08-29 08:01",
+    },
   ],
 };
 
@@ -442,10 +772,82 @@ export interface CaseSummary {
 }
 
 export const caseSummaries: CaseSummary[] = [
-  { id: "CASE-0091", name: "Operation Black Web", status: "ACTIVE", priority: "HIGH", entities: 43, networks: 5, investigator: "AGENT SHARMA", opened: "2026-07-14", updated: "2h ago", description: "Deep web marketplace network linked to narcotics and weapon distribution across 4 states." },
-  { id: "CASE-0092", name: "Financial Investigation – Offshore", status: "ACTIVE", priority: "MEDIUM", entities: 18, networks: 2, investigator: "AGENT KAPOOR", opened: "2026-08-01", updated: "5h ago", description: "Suspected money laundering via shell companies. Offshore accounts flagged in 3 jurisdictions." },
-  { id: "CASE-0088", name: "Narco Supply Route – Punjab", status: "ACTIVE", priority: "HIGH", entities: 76, networks: 8, investigator: "AGENT MEHTA", opened: "2026-06-20", updated: "12h ago", description: "Cross-border narcotics supply chain spanning Pakistan border. 76 entities identified in transit network." },
-  { id: "CASE-0083", name: "Cybercrime Syndicate – Mumbai", status: "PENDING", priority: "MEDIUM", entities: 29, networks: 3, investigator: "AGENT VERMA", opened: "2026-05-10", updated: "2 days ago", description: "Organized cybercrime group suspected of large-scale phishing and bank fraud operations." },
-  { id: "CASE-0071", name: "Human Trafficking – Network Alpha", status: "CLOSED", priority: "HIGH", entities: 94, networks: 11, investigator: "AGENT SINGH", opened: "2026-02-03", updated: "30 days ago", description: "Dismantled trafficking network. 94 entities prosecuted. Case closed with 12 convictions." },
-  { id: "CASE-0065", name: "Counterfeit Currency Ring", status: "CLOSED", priority: "LOW", entities: 12, networks: 1, investigator: "AGENT PATEL", opened: "2026-01-18", updated: "45 days ago", description: "Small-scale counterfeit operation. Case resolved, suspects in custody." },
+  {
+    id: "CASE-0091",
+    name: "Operation Black Web",
+    status: "ACTIVE",
+    priority: "HIGH",
+    entities: 43,
+    networks: 5,
+    investigator: "AGENT SHARMA",
+    opened: "2026-07-14",
+    updated: "2h ago",
+    description:
+      "Deep web marketplace network linked to narcotics and weapon distribution across 4 states.",
+  },
+  {
+    id: "CASE-0092",
+    name: "Financial Investigation – Offshore",
+    status: "ACTIVE",
+    priority: "MEDIUM",
+    entities: 18,
+    networks: 2,
+    investigator: "AGENT KAPOOR",
+    opened: "2026-08-01",
+    updated: "5h ago",
+    description:
+      "Suspected money laundering via shell companies. Offshore accounts flagged in 3 jurisdictions.",
+  },
+  {
+    id: "CASE-0088",
+    name: "Narco Supply Route – Punjab",
+    status: "ACTIVE",
+    priority: "HIGH",
+    entities: 76,
+    networks: 8,
+    investigator: "AGENT MEHTA",
+    opened: "2026-06-20",
+    updated: "12h ago",
+    description:
+      "Cross-border narcotics supply chain spanning Pakistan border. 76 entities identified in transit network.",
+  },
+  {
+    id: "CASE-0083",
+    name: "Cybercrime Syndicate – Mumbai",
+    status: "PENDING",
+    priority: "MEDIUM",
+    entities: 29,
+    networks: 3,
+    investigator: "AGENT VERMA",
+    opened: "2026-05-10",
+    updated: "2 days ago",
+    description:
+      "Organized cybercrime group suspected of large-scale phishing and bank fraud operations.",
+  },
+  {
+    id: "CASE-0071",
+    name: "Human Trafficking – Network Alpha",
+    status: "CLOSED",
+    priority: "HIGH",
+    entities: 94,
+    networks: 11,
+    investigator: "AGENT SINGH",
+    opened: "2026-02-03",
+    updated: "30 days ago",
+    description:
+      "Dismantled trafficking network. 94 entities prosecuted. Case closed with 12 convictions.",
+  },
+  {
+    id: "CASE-0065",
+    name: "Counterfeit Currency Ring",
+    status: "CLOSED",
+    priority: "LOW",
+    entities: 12,
+    networks: 1,
+    investigator: "AGENT PATEL",
+    opened: "2026-01-18",
+    updated: "45 days ago",
+    description:
+      "Small-scale counterfeit operation. Case resolved, suspects in custody.",
+  },
 ];

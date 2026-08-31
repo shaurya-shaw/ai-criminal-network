@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { fetchEntitiesFromDb, createEntityInDb } from "@/lib/supabase/server";
 import { dataStore } from "@/lib/api/data-store";
-import type { EntityType, EntityStatus } from "@/lib/api/types";
+import type { EntityType, EntityStatus, Entity } from "@/lib/api/types";
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,7 +12,47 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get("sortBy") as "riskScore" | "name" | "lastSeen" | null;
     const sortOrder = searchParams.get("sortOrder") as "asc" | "desc" | null;
 
-    const entities = dataStore.getAllEntities({
+    // 1. Query persistent Supabase entities table
+    try {
+      const dbRes = await fetchEntitiesFromDb({
+        type: type || undefined,
+        status: status || undefined,
+        search,
+        sortBy: sortBy || undefined,
+        sortOrder: sortOrder || undefined,
+      });
+
+      if (dbRes.success && dbRes.entities && dbRes.entities.length > 0) {
+        const mappedEntities: Entity[] = dbRes.entities.map((e) => ({
+          id: e.id,
+          name: e.name,
+          alias: e.alias || undefined,
+          type: e.type,
+          riskScore: e.risk_score,
+          cases: e.cases || [],
+          lastSeen: e.last_seen,
+          status: e.status,
+          attributes: e.attributes || undefined,
+        }));
+
+        const flaggedCount = mappedEntities.filter((e) => e.status === "FLAGGED").length;
+
+        return NextResponse.json(
+          {
+            entities: mappedEntities,
+            total: mappedEntities.length,
+            flaggedCount,
+            source: "supabase",
+          },
+          { status: 200 }
+        );
+      }
+    } catch (dbErr) {
+      console.warn("Supabase fetchEntitiesFromDb note, falling back to local store:", dbErr);
+    }
+
+    // 2. Fallback to local persistent store
+    const localEntities = dataStore.getAllEntities({
       type: type || undefined,
       status: status || undefined,
       search,
@@ -19,13 +60,14 @@ export async function GET(request: NextRequest) {
       sortOrder: sortOrder || undefined,
     });
 
-    const flaggedCount = entities.filter((e) => e.status === "FLAGGED").length;
+    const flaggedCount = localEntities.filter((e) => e.status === "FLAGGED").length;
 
     return NextResponse.json(
       {
-        entities,
-        total: entities.length,
+        entities: localEntities,
+        total: localEntities.length,
         flaggedCount,
+        source: "local-store",
       },
       { status: 200 }
     );
@@ -49,6 +91,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 1. Create in local persistent store
     const newEntity = dataStore.createEntity({
       name,
       alias,
@@ -57,6 +100,22 @@ export async function POST(request: NextRequest) {
       cases: Array.isArray(cases) ? cases : [],
       status: status as EntityStatus,
     });
+
+    // 2. Persist in Supabase Postgres
+    try {
+      await createEntityInDb({
+        id: newEntity.id,
+        name: newEntity.name,
+        alias: newEntity.alias,
+        type: newEntity.type,
+        risk_score: newEntity.riskScore,
+        cases: newEntity.cases,
+        status: newEntity.status,
+        last_seen: newEntity.lastSeen,
+      });
+    } catch (dbErr) {
+      console.warn("Supabase createEntityInDb note:", dbErr);
+    }
 
     return NextResponse.json(newEntity, { status: 201 });
   } catch (error) {

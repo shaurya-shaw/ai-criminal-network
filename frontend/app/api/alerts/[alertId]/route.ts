@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { updateAlertStatusInDb } from "@/lib/supabase/server";
 import { dataStore } from "@/lib/api/data-store";
 import type { AlertStatus } from "@/lib/api/types";
 
@@ -18,7 +19,16 @@ export async function PATCH(
       );
     }
 
+    // 1. Update in local store
     const updated = dataStore.updateAlertStatus(alertId, status as AlertStatus);
+
+    // 2. Update in Supabase
+    try {
+      await updateAlertStatusInDb(alertId, status as AlertStatus);
+    } catch (dbErr) {
+      console.warn("Supabase updateAlertStatusInDb note:", dbErr);
+    }
+
     if (!updated) {
       return NextResponse.json(
         { error: `Alert '${alertId}' not found` },

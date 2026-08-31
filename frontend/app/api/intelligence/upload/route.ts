@@ -6,6 +6,10 @@ import {
   createDataSourceRecord,
   deleteStorageFile,
   processDataSourceDocument,
+  createCaseInDb,
+  updateCaseInDb,
+  syncExtractedEntitiesToDb,
+  syncExtractedAlertsToDb,
   DataSourceType,
 } from "@/lib/supabase/server";
 import { dataStore } from "@/lib/api/data-store";
@@ -106,23 +110,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Handle Case Selection / Creation
-    let targetCase = caseId && caseId !== "NEW" ? dataStore.getCaseById(caseId) : undefined;
+    // 3. Handle Case Selection / Creation ID
+    const isNewCase = caseId === "NEW" || !caseId;
+    let targetCase = !isNewCase ? dataStore.getCaseById(caseId) : undefined;
+    if (isNewCase || !targetCase) {
+      const newCaseIdx = dataStore.getAllCases().length + 90;
+      caseId = `CASE-00${newCaseIdx}`;
+    }
 
-    if (caseId === "NEW" || !targetCase) {
-      const caseName = newCaseName || `Investigation — ${file.name.replace(/\.[^/.]+$/, "")}`;
-      targetCase = dataStore.createCase({
-        name: caseName,
-        description: notes || `Investigation initiated from ingested ${sourceType} material (${file.name}).`,
+    const investigatorName = userId ? `AGENT-${userId.slice(-6).toUpperCase()}` : "LEAD INVESTIGATOR";
+
+    // Ensure Parent Case exists in Supabase to satisfy foreign key (data_sources.case_id -> cases.id)
+    try {
+      await createCaseInDb({
+        id: caseId,
+        case_number: caseId,
+        title: newCaseName || (targetCase?.name) || `Investigation // ${file.name.replace(/\.[^/.]+$/, "")}`,
+        summary: notes || (targetCase?.description) || `Investigation initiated from ${sourceType} (${file.name}).`,
         priority: newCasePriority,
-        investigator: userId ? `AGENT-${userId.slice(-6).toUpperCase()}` : "LEAD INVESTIGATOR",
+        investigator: investigatorName,
         jurisdiction: newCaseJurisdiction,
+        status: "ACTIVE",
       });
-      caseId = targetCase.id;
+    } catch (dbCaseErr) {
+      console.warn("Pre-creating Supabase case note:", dbCaseErr);
     }
 
     // 4. Generate Unique Source ID and Storage Path
-    const randomHex = crypto.randomBytes(4).toString("hex"); // e.g. '8f32a1b2'
+    const randomHex = crypto.randomBytes(4).toString("hex");
     const sourceId = `SRC-${randomHex}`;
     const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
     const storagePath = `cases/${caseId}/${sourceType}/${sourceId}-${sanitizedFileName}`;
@@ -147,7 +162,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Track path for rollback if DB insertion fails
     uploadedStoragePath = storagePath;
 
     // 6. Insert Metadata Row into Postgres data_sources Table
@@ -164,7 +178,6 @@ export async function POST(request: NextRequest) {
     });
 
     if (!dbRecordRes.success) {
-      // Step 5 failure handling: clean up orphaned file from storage
       console.error(
         `Postgres metadata insert failed for ${sourceId}. Rolling back storage upload for ${storagePath}...`
       );
@@ -179,28 +192,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 7. Update In-Memory Case Evidence & Timeline
-    const evidenceType = sourceTypeToEvidenceType[sourceType] || "DOCUMENT";
-    targetCase.evidence.unshift({
-      id: `EV-${sourceId.slice(4, 9).toUpperCase()}`,
-      title: title,
-      type: evidenceType,
-      source: `Supabase Vault // ${sourceType}`,
-      dateAdded: new Date().toISOString().split("T")[0],
-      linkedEntities: [],
-      description: `${notes ? notes + " — " : ""}Stored at ${storagePath} (${(file.size / 1024).toFixed(1)} KB)`,
-    });
-    targetCase.evidenceCount = targetCase.evidence.length;
-
-    targetCase.timeline.unshift({
-      id: `T-${Date.now().toString().slice(-4)}`,
-      timestamp: `${new Date().toISOString().replace("T", " ").slice(0, 16)}`,
-      title: `Intelligence Ingested: ${title}`,
-      description: `Ingested ${sourceType} document (${file.name}) [${sourceId}] to storage vault.`,
-      type: "INTEL",
-    });
-
-    // 8. Automatically Run Document Processing Pipeline (UPLOADED -> PROCESSING -> REVIEW)
+    // 7. Automatically Run Document Processing Pipeline (UPLOADED -> PROCESSING -> REVIEW)
     let finalStatus = "UPLOADED";
     let extractedData = null;
     try {
@@ -212,6 +204,83 @@ export async function POST(request: NextRequest) {
     } catch (procErr) {
       console.warn("Background AI processing note:", procErr);
     }
+
+    // 8. Create or Enrich Target Case in Data Store and Supabase Cases Table
+    const sourceInfo = {
+      id: sourceId,
+      filename: file.name,
+      storagePath,
+      sourceType,
+      fileSize: file.size,
+    };
+
+    if (isNewCase || !targetCase) {
+      if (extractedData) {
+        targetCase = dataStore.createCaseFromExtraction({
+          id: caseId,
+          name: newCaseName || undefined,
+          priority: newCasePriority,
+          investigator: investigatorName,
+          jurisdiction: newCaseJurisdiction,
+          extraction: extractedData,
+          sourceInfo,
+        });
+      } else {
+        targetCase = dataStore.createCase({
+          id: caseId,
+          name: newCaseName || `Investigation — ${file.name.replace(/\.[^/.]+$/, "")}`,
+          description: notes || `Investigation initiated from ingested ${sourceType} material (${file.name}).`,
+          priority: newCasePriority,
+          investigator: investigatorName,
+          jurisdiction: newCaseJurisdiction,
+        });
+      }
+      caseId = targetCase.id;
+    } else {
+      if (extractedData) {
+        targetCase = dataStore.enrichCaseWithExtraction(caseId, extractedData, sourceInfo) || targetCase;
+      } else {
+        const evidenceType = sourceTypeToEvidenceType[sourceType] || "DOCUMENT";
+        targetCase.evidence.unshift({
+          id: `EV-${sourceId.slice(4, 9).toUpperCase()}`,
+          title: title,
+          type: evidenceType,
+          source: `Supabase Vault // ${sourceType}`,
+          dateAdded: new Date().toISOString().split("T")[0],
+          linkedEntities: [],
+          description: `${notes ? notes + " — " : ""}Stored at ${storagePath} (${(file.size / 1024).toFixed(1)} KB)`,
+        });
+        targetCase.evidenceCount = targetCase.evidence.length;
+      }
+    }
+
+    // Persist case-level summary / AI assessment to Supabase cases table
+    try {
+      await updateCaseInDb(caseId, {
+        title: targetCase.name,
+        summary: targetCase.brief || targetCase.description,
+        ai_assessment: targetCase.aiAssessment,
+        priority: targetCase.priority,
+        jurisdiction: targetCase.jurisdiction,
+        classification: targetCase.classification,
+        investigator: targetCase.investigator,
+        status: targetCase.status,
+      });
+
+      // Synchronize extracted entities to Supabase entities registry
+      if (extractedData?.entities && Array.isArray(extractedData.entities)) {
+        await syncExtractedEntitiesToDb(caseId, extractedData.entities);
+      }
+
+      // Synchronize extracted alerts to Supabase alerts feed
+      if (extractedData?.alerts && Array.isArray(extractedData.alerts)) {
+        await syncExtractedAlertsToDb(caseId, extractedData.alerts);
+      }
+    } catch (updateCaseErr) {
+      console.warn("Supabase updateCaseInDb / syncExtractedEntitiesToDb / syncExtractedAlertsToDb note:", updateCaseErr);
+    }
+
+
 
     // 9. Return Success Payload
     return NextResponse.json(
@@ -237,7 +306,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    // If an unhandled exception occurred after upload, attempt storage cleanup
     if (uploadedStoragePath) {
       try {
         await deleteStorageFile(uploadedStoragePath);
