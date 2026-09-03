@@ -338,6 +338,386 @@
           "role": "ai",
           "content": "**Case Initialized from FIR**: Money laundering\n\nThe newly identified individual, Neel Arora, operating East Dock Storage Unit 4, appears to be a critical intermediary in the coordinated movement of goods and communications, potentially serving as a central coordinator for logistics and storage operations linked to the financial fraud.\n\nIndexed 16 entities, 7 timeline occurrences, and 5 evidence references.",
           "timestamp": "Just now"
+        },
+        {
+          "id": "M-002",
+          "role": "user",
+          "content": "how is neel arora connected in this case",
+          "timestamp": "12:09"
+        },
+        {
+          "id": "M-003",
+          "role": "ai",
+          "content": "Neel Arora is connected in this case through the following confirmed facts:\n\n1.  **Involvement in the Case:** Neel Arora (ID: CASE-0090::SRC-df4e32e1::entity::ENT-4) is explicitly identified as an entity within \"Operation East Dock - Financial Fraud & Logistics.\"\n    *   **Supporting Entity/Event/Evidence:** Graph Relationship: `(\"Operation East Dock - Financial Fraud & Logistics\") -[:HAS_ENTITY]-> (\"Neel Arora\")`. Also mentioned in the `Primary FIR Dossier — money_laundering_CASE-0091.pdf` (Evidence: [EV-001]).\n\n2.  **Association with East Dock Storage Unit 4:** Neel Arora is confirmed to be the operator of \"East Dock Storage Unit 4\" (ID: CASE-0090::SRC-df4e32e1::entity::ENT-9).\n    *   **Supporting Entity/Event/Evidence:** Graph Relationship: `(\"Neel Arora\") -[:ASSOCIATED_WITH]-> (\"East Dock Storage Unit 4\") — operator of`. This is corroborated by a fictional access log linking Neel Arora to Storage Unit 4 (Evidence: [EV-004]).\n\n3.  **Relationship and Meeting with Ravi Sen:**\n    *   **Fact:** Neel Arora knows Ravi Sen (ID: CASE-0090::SRC-df4e32e1::entity::ENT-3).\n        *   **Supporting Entity/Event/Evidence:** Graph Relationship: `(\"Neel Arora\") -[:KNOWS]-> (\"Ravi Sen\") — meets`.\n    *   **Fact:** Neel Arora met Ravi Sen near the storage facility on 2026-08-30 at 20:41.\n        *   **Supporting Entity/Event/Evidence:** Event: `[2026-08-30 20:41] (SURVEILLANCE) Neel Arora Meets Ravi Sen` (Related Entities: ENT-4, ENT-3, ENT-9). This event is also linked in the graph: `(\"Neel Arora\") -[:INVOLVED_IN]-> (\"Neel Arora Meets Ravi Sen\")`.\n\n4.  **Association with Phone Number +91-90000-10093:** Neel Arora is associated with the phone number +91-90000-10093 (ID: CASE-0090::SRC-df4e32e1::entity::ENT-13).\n    *   **Supporting Entity/Event/Evidence:** Graph Relationship: `(\"+91-90000-10093\") -[:OWNS]-> (\"Neel Arora\") — associated with`.\n    *   **Fact:** A 176-second phone call occurred between +91-90000-10093 (Neel Arora's associated number) and +91-90000-10092 (ID: CASE-0090::SRC-df4e32e1::entity::ENT-14) on 2026-08-30 at 21:02.\n        *   **Supporting Entity/Event/Evidence:** Event: `[2026-08-30 21:02] (COMMUNICATION) Phone Call Between Suspects`. This is confirmed by a fictional call-detail record (Evidence: [EV-005]).\n\n5.  **Mention in General Evidence:** Neel Arora is mentioned in \"5. Evidence.\"\n    *   **Supporting Entity/Event/Evidence:** Graph Relationship: `(\"Neel Arora\") -[:MENTIONED_IN]-> (\"5. Evidence\")`. Specific details are provided in [EV-004].\n\nThe available data does not establish a direct connection between Neel Arora and the financial transfer of INR 485,000 (Related Entities: ENT-15, ENT-16, ENT-7).\nThe available data does not establish a direct ownership or specific association of Neel Arora with vehicle WB-99-TEST-204, beyond the vehicle entering and leaving East Dock Storage Unit 4, where Neel Arora is an operator.\nThe available data does not explicitly state the identity of the person associated with phone number +91-90000-10092, only that it communicated with Neel Arora's associated number.",
+          "timestamp": "12:09"
+        },
+        {
+          "id": "M-004",
+          "role": "user",
+          "content": "How is the primary suspect connected to this case?",
+          "timestamp": "12:19"
+        },
+        {
+          "id": "M-005",
+          "role": "ai",
+          "content": "**Neel Arora** is connected to this case through his operation of a key high-risk location and direct contact with another suspect.\n\nHere are the strongest connections for Neel Arora:\n\n*   **CONFIRMED FACT:** Neel Arora is identified as the **operator of East Dock Storage Unit 4**, a location with a high risk score of 80/100. This facility is central to several events in the case, including \"Vehicle Enters Storage Unit\" at 2026-08-30 20:34 and \"Vehicle Leaves Storage Unit\" at 2026-08-30 21:24.\n*   **CONFIRMED FACT:** Neel Arora was in **direct contact with Ravi Sen**, another person of interest (Risk Score: 70/100). Surveillance recorded \"Neel Arora Meets Ravi Sen\" near the storage facility on 2026-08-30 at 20:41.\n*   **CONFIRMED FACT:** Neel Arora is **associated with the phone number +91-90000-10093**. This phone was involved in a \"Phone Call Between Suspects\" event, receiving a 176-second call from +91-90000-10092 on 2026-08-30 at 21:02.\n*   **CONFIRMED FACT:** Evidence exists in the form of a **fictional access log linking Neel Arora to East Dock Storage Unit 4**. This documentation directly corroborates his operational link to the storage facility, as referenced in \"5. Evidence\".\n\n**What is not established:** Neel Arora's specific role or involvement in the \"Financial Transfer\" event, any direct association with the vehicles WB-99-TEST-091 or WB-99-TEST-204 beyond the meeting at the storage unit, or direct links to the bank accounts ML-TEST-4401 or NL-TEST-7712.",
+          "timestamp": "12:19"
+        },
+        {
+          "id": "M-006",
+          "role": "user",
+          "content": "what is known about arjun rawat in this case",
+          "timestamp": "12:21"
+        },
+        {
+          "id": "M-007",
+          "role": "ai",
+          "content": "**What is not established:** There is no entity named \"Arjun Rawat\" in the current case graph. Therefore, nothing is known about their involvement or connection to \"Operation East Dock - Financial Fraud & Logistics.\"",
+          "timestamp": "12:21"
+        }
+      ]
+    },
+    {
+      "id": "CASE-0091",
+      "name": "Operation Black Web",
+      "status": "ACTIVE",
+      "priority": "HIGH",
+      "description": "Deep web marketplace network linked to narcotics and weapon distribution across 4 states.",
+      "brief": "Operation Black Web is a multi-agency investigation into an encrypted dark web marketplace facilitating narcotics, weapons, and counterfeit documents across Maharashtra, Delhi, Punjab, and Rajasthan. The network operates through a layered anonymization infrastructure and uses cryptocurrency for settlements. Intelligence suggests a centralized command node operating out of Mumbai with regional distribution cells.",
+      "investigator": "AGENT SHARMA",
+      "team": [
+        "AGENT SHARMA",
+        "AGENT REDDY",
+        "AGENT NAIR",
+        "ANALYST JOSHI"
+      ],
+      "opened": "2026-07-14",
+      "updated": "2h ago",
+      "jurisdiction": "NATIONAL — MH, DL, PB, RJ",
+      "classification": "RESTRICTED // LEVEL-3",
+      "entityCount": 43,
+      "relationshipCount": 118,
+      "evidenceCount": 27,
+      "alertCount": 5,
+      "aiAssessment": {
+        "finding": "Entity E-0774 (Rajan Mehra) shows centrality metrics consistent with a network coordinator role — 94% confidence of command-level involvement.",
+        "confidence": 94,
+        "category": "NETWORK CENTRALITY"
+      },
+      "networks": [
+        {
+          "id": "NET-001",
+          "name": "Black Web Core Ring",
+          "nodes": 43,
+          "edges": 118,
+          "riskLevel": "CRITICAL"
+        },
+        {
+          "id": "NET-002",
+          "name": "Courier Sub-Network",
+          "nodes": 12,
+          "edges": 29,
+          "riskLevel": "HIGH"
+        }
+      ],
+      "entities": [
+        {
+          "id": "E-1482",
+          "name": "Arjun Rawat",
+          "alias": "AJ",
+          "type": "PERSON",
+          "riskScore": 94,
+          "status": "FLAGGED",
+          "lastSeen": "2026-08-29"
+        },
+        {
+          "id": "E-0774",
+          "name": "Rajan Mehra",
+          "alias": "The Broker",
+          "type": "PERSON",
+          "riskScore": 91,
+          "status": "FLAGGED",
+          "lastSeen": "2026-08-28"
+        },
+        {
+          "id": "E-0941",
+          "name": "+91-98765-43210",
+          "type": "PHONE",
+          "riskScore": 62,
+          "status": "MONITORING",
+          "lastSeen": "2026-08-25"
+        },
+        {
+          "id": "E-1188",
+          "name": "Shadow Vault Ltd.",
+          "type": "ORGANIZATION",
+          "riskScore": 85,
+          "status": "FLAGGED",
+          "lastSeen": "2026-08-27"
+        },
+        {
+          "id": "E-1340",
+          "name": "BTC Wallet 0x4f8...c3a",
+          "type": "ACCOUNT",
+          "riskScore": 77,
+          "status": "MONITORING",
+          "lastSeen": "2026-08-26"
+        },
+        {
+          "id": "E-0610",
+          "name": "Amritsar Warehouse, Block 4",
+          "type": "LOCATION",
+          "riskScore": 78,
+          "status": "MONITORING",
+          "lastSeen": "2026-08-22"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "T-001",
+          "timestamp": "2026-07-14 09:00",
+          "title": "Case Opened",
+          "description": "Initial intelligence received from CDRS analysis. Case file created and assigned to Agent Sharma.",
+          "type": "SYSTEM"
+        },
+        {
+          "id": "T-002",
+          "timestamp": "2026-07-18 14:32",
+          "title": "First Surveillance Contact",
+          "description": "Physical surveillance team established visual on Arjun Rawat (E-1482) at Amritsar Warehouse, Block 4.",
+          "type": "SURVEILLANCE",
+          "relatedEntities": [
+            "E-1482",
+            "E-0610"
+          ]
+        },
+        {
+          "id": "T-003",
+          "timestamp": "2026-07-24 11:15",
+          "title": "Cryptocurrency Trace Initiated",
+          "description": "Blockchain analysis unit flagged BTC Wallet 0x4f8...c3a with ₹2.1CR in unattributed inflows over 30 days.",
+          "type": "FINANCIAL",
+          "relatedEntities": [
+            "E-1340"
+          ]
+        },
+        {
+          "id": "T-004",
+          "timestamp": "2026-08-02 08:44",
+          "title": "Communication Intercept",
+          "description": "Encrypted communication between E-1482 and E-0774 intercepted. Content partially decoded — references to 'shipment D4'.",
+          "type": "COMMUNICATION",
+          "relatedEntities": [
+            "E-1482",
+            "E-0774"
+          ]
+        },
+        {
+          "id": "T-005",
+          "timestamp": "2026-08-10 19:20",
+          "title": "Shadow Vault Ltd. Flagged",
+          "description": "Financial intelligence links Shadow Vault Ltd. to three shell companies receiving transfers from flagged accounts.",
+          "type": "FINANCIAL",
+          "relatedEntities": [
+            "E-1188"
+          ]
+        },
+        {
+          "id": "T-006",
+          "timestamp": "2026-08-17 03:15",
+          "title": "Intel: Supplier Identity",
+          "description": "Source DELTA-7 confirms Rajan Mehra (E-0774) is acting as primary coordinator between dark web marketplace and physical distribution network.",
+          "type": "INTEL",
+          "relatedEntities": [
+            "E-0774"
+          ]
+        },
+        {
+          "id": "T-007",
+          "timestamp": "2026-08-22 16:00",
+          "title": "Network Anomaly Detected",
+          "description": "Automated system flagged unusual spike in connections from E-1482. Three new previously unknown nodes identified.",
+          "type": "SYSTEM",
+          "relatedEntities": [
+            "E-1482"
+          ]
+        },
+        {
+          "id": "T-008",
+          "timestamp": "2026-08-29 13:48",
+          "title": "High Priority Alert Triggered",
+          "description": "Network topology engine detected new cross-border connection. Alert escalated to lead investigator.",
+          "type": "SURVEILLANCE"
+        }
+      ],
+      "evidence": [
+        {
+          "id": "EV-001",
+          "title": "CDRS Communication Log – July 2026",
+          "type": "COMMUNICATION",
+          "source": "CDRS Feed – DS-001",
+          "dateAdded": "2026-07-20",
+          "linkedEntities": [
+            "E-1482",
+            "E-0941"
+          ],
+          "description": "28 days of call detail records showing communication pattern between key entities."
+        },
+        {
+          "id": "EV-002",
+          "title": "BTC Transaction History",
+          "type": "FINANCIAL_RECORD",
+          "source": "Blockchain Analysis Unit",
+          "dateAdded": "2026-07-25",
+          "linkedEntities": [
+            "E-1340",
+            "E-1188"
+          ],
+          "description": "Cryptocurrency transaction ledger with ₹2.1CR unattributed inflows flagged."
+        },
+        {
+          "id": "EV-003",
+          "title": "Surveillance Footage – Amritsar Warehouse",
+          "type": "MEDIA",
+          "source": "CCTV Index – DS-003",
+          "dateAdded": "2026-07-19",
+          "linkedEntities": [
+            "E-1482",
+            "E-0610"
+          ],
+          "description": "72 hours of footage capturing entity movement at Warehouse Block 4."
+        },
+        {
+          "id": "EV-004",
+          "title": "Encrypted Message Partial Decode",
+          "type": "DOCUMENT",
+          "source": "SIGINT Unit",
+          "dateAdded": "2026-08-03",
+          "linkedEntities": [
+            "E-1482",
+            "E-0774"
+          ],
+          "description": "Partially decoded encrypted communication referencing 'shipment D4' and delivery coordinates."
+        },
+        {
+          "id": "EV-005",
+          "title": "Shadow Vault Ltd. Incorporation Docs",
+          "type": "DOCUMENT",
+          "source": "MCA Registry",
+          "dateAdded": "2026-08-11",
+          "linkedEntities": [
+            "E-1188"
+          ],
+          "description": "Company incorporation documents listing E-0774 as a silent director via nominee arrangement."
+        },
+        {
+          "id": "EV-006",
+          "title": "Seized Physical Sample – Batch D4",
+          "type": "PHYSICAL",
+          "source": "Field Team ALPHA",
+          "dateAdded": "2026-08-20",
+          "linkedEntities": [
+            "E-0610"
+          ],
+          "description": "Physical evidence collected from Amritsar Warehouse – 4.2kg controlled substance, forensic analysis pending."
+        }
+      ],
+      "alerts": [
+        {
+          "id": "ALT-0091",
+          "title": "Network anomaly detected",
+          "description": "Unusual spike in connection requests from entity E-1482 across 3 nodes in cluster B. Possible lateral movement.",
+          "severity": "CRITICAL",
+          "status": "NEW",
+          "timestamp": "2026-08-29 13:48 UTC"
+        },
+        {
+          "id": "ALT-0090",
+          "title": "High-risk entity flagged",
+          "description": "Entity E-0774 matched against cross-case correlation engine. Appears in 3 active cases.",
+          "severity": "CRITICAL",
+          "status": "NEW",
+          "timestamp": "2026-08-29 13:21 UTC"
+        },
+        {
+          "id": "ALT-0088",
+          "title": "New connection established",
+          "description": "Previously unknown entity added connection to Rajan Mehra (E-0774). Entity ID pending assignment.",
+          "severity": "WARNING",
+          "status": "ACKNOWLEDGED",
+          "timestamp": "2026-08-29 11:44 UTC"
+        },
+        {
+          "id": "ALT-0085",
+          "title": "Crypto wallet activity",
+          "description": "BTC Wallet 0x4f8...c3a recorded outbound transaction of ₹0.8CR to unknown address.",
+          "severity": "WARNING",
+          "status": "ACKNOWLEDGED",
+          "timestamp": "2026-08-28 22:30 UTC"
+        },
+        {
+          "id": "ALT-0081",
+          "title": "CDRS sync gap resolved",
+          "description": "18-minute data gap in CDRS feed now recovered. No records missing.",
+          "severity": "INFO",
+          "status": "RESOLVED",
+          "timestamp": "2026-08-27 08:00 UTC"
+        }
+      ],
+      "aiMessages": [
+        {
+          "id": "M-001",
+          "role": "ai",
+          "content": "**Case Analysis: Operation Black Web**\n\nInitial graph analysis reveals a hub-and-spoke topology with Rajan Mehra (E-0774) at the center, maintaining connections to 14 distinct entities across 3 geographic clusters. This centrality pattern is consistent with a network coordinator or broker role.\n\nKey finding: E-0774 and E-1482 share 4 overlapping communication windows with encrypted BTC wallet activity — suggesting coordinated operational timing.",
+          "timestamp": "2026-08-29 09:00"
+        },
+        {
+          "id": "M-002",
+          "role": "ai",
+          "content": "**Risk Assessment**\n\nOverall network risk score: **91/100 — CRITICAL**\n\n- Rajan Mehra (E-0774): 91 — suspected command role\n- Arjun Rawat (E-1482): 94 — most active node\n- Shadow Vault Ltd. (E-1188): 85 — financial conduit\n\nRecommended immediate action: Physical surveillance escalation on E-0774 and financial freeze request on E-1188.",
+          "timestamp": "2026-08-29 09:01"
+        },
+        {
+          "id": "M-003",
+          "role": "ai",
+          "content": "**Suggested Investigative Leads**\n\n1. Cross-reference BTC Wallet 0x4f8...c3a outbound addresses against known dark web exchange wallets\n2. Request communication records for +91-98765-43210 (E-0941) for August 1–29\n3. Subpoena Shadow Vault Ltd. bank statements from 3 flagged jurisdictions\n4. Identify the 3 new unknown nodes connected to E-1482 in today's anomaly alert",
+          "timestamp": "2026-08-29 09:02"
+        },
+        {
+          "id": "M-004",
+          "role": "user",
+          "content": "Does Diana Holt have a connection to Meridian Warehouse?",
+          "timestamp": "12:04"
+        },
+        {
+          "id": "M-005",
+          "role": "ai",
+          "content": "Based on the provided case data:\n\nThe available data does not establish a connection between Diana Holt and Meridian Warehouse. Neither \"Diana Holt\" nor \"Meridian Warehouse\" are mentioned in the supplied case graph, events, or evidence.",
+          "timestamp": "12:04"
+        },
+        {
+          "id": "M-006",
+          "role": "user",
+          "content": "What is the status and confirmed activity of Arjun Rawat?",
+          "timestamp": "12:04"
+        },
+        {
+          "id": "M-007",
+          "role": "ai",
+          "content": "Arjun Rawat (E-1482) is assessed as a high-risk individual (Risk: 94) based on the entity node data.\n\nConfirmed activities and status include:\n\n*   **Physical Presence:** Arjun Rawat was observed by a physical surveillance team at Amritsar Warehouse, Block 4, on 2026-07-18 at 14:32 (Event: [2026-07-18 14:32], Related Entity: E-0610). Surveillance footage confirms his movement at Warehouse Block 4 over 72 hours (Evidence: [EV-003]).\n*   **Communication with Rajan Mehra (E-0774):** Encrypted communication between Arjun Rawat (E-1482) and Rajan Mehra (E-0774) was intercepted on 2026-08-02 at 08:44. The partially decoded content references 'shipment D4' and delivery coordinates (Event: [2026-08-02 08:44], Evidence: [EV-004]).\n*   **Communication with E-0941:** Call detail records from July 2026 indicate a communication pattern between Arjun Rawat (E-1482) and E-0941 (Evidence: [EV-001]).\n*   **Network Activity:** An automated system detected an unusual spike in network connections originating from Arjun Rawat (E-1482) on 2026-08-22 at 16:00, which led to the identification of three new, previously unknown nodes (Event: [2026-08-22 16:00]).\n\nThe available data does not establish a direct connection between Arjun Rawat and the BTC Wallet 0x4f8...c3a (E-1340) or Shadow Vault Ltd. (E-1188). While a physical sample (Batch D4) was seized from Amritsar Warehouse (E-0610) (Evidence: [EV-006]), Arjun Rawat's direct involvement with the seized substance is not explicitly confirmed by the provided data, only his presence at the location.",
+          "timestamp": "12:04"
+        },
+        {
+          "id": "M-008",
+          "role": "user",
+          "content": "How is Arjun Rawat connected to this case?",
+          "timestamp": "12:17"
+        },
+        {
+          "id": "M-009",
+          "role": "ai",
+          "content": "**Arjun Rawat is connected to this case through direct surveillance and intercepted communications.**\n\nHere are the strongest relevant connections:\n\n1.  **CONFIRMED FACT:** Arjun Rawat was placed under physical surveillance and visually confirmed at the Amritsar Warehouse, Block 4, on **2026-07-18 14:32**. \"Surveillance Footage – Amritsar Warehouse\" further corroborates his movement at this location, also linking him to entity E-0610.\n2.  **CONFIRMED FACT:** An encrypted communication between Arjun Rawat and entity E-0774 was intercepted on **2026-08-02 08:44**. The \"Encrypted Message Partial Decode\" shows this communication referenced 'shipment D4' and specific delivery coordinates.\n3.  **CONFIRMED FACT:** Analysis of \"CDRS Communication Log – July 2026\" shows a consistent communication pattern between Arjun Rawat and entity E-0941 over a 28-day period.\n4.  **CONFIRMED FACT:** An automated system flagged an unusual spike in network connections originating from Arjun Rawat on **2026-08-22 16:00**, which led to the identification of three new, previously unknown nodes.\n\n**What is not established:**\n*   The full identity or specific role of entities E-0610 and E-0941.\n*   Arjun Rawat's direct involvement with the cryptocurrency wallet 0x4f8...c3a or Shadow Vault Ltd.\n*   The exact nature or contents of 'shipment D4'.\n*   Arjun Rawat's ownership or specific role regarding the Amritsar Warehouse.\n*   The specific nature or identities of the \"three new previously unknown nodes\" linked to Arjun Rawat's network activity.",
+          "timestamp": "12:17"
         }
       ]
     }

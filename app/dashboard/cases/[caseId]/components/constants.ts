@@ -162,8 +162,8 @@ export const caseNavSections = [
 ];
 
 export const aiQuickActions = [
-  "Analyze connections",
-  "Risk assessment",
-  "Suggest leads",
-  "Summarize case",
+  "How is the primary suspect connected to this case?",
+  "Does Diana Holt have a connection to Meridian Warehouse?",
+  "What is known about Arjun Rawat?",
+  "Suggest investigative leads",
 ];

@@ -29,6 +29,7 @@ import type {
 } from "./types";
 
 import type { IntelligenceExtractionResult } from "@/lib/ai/types";
+import { allCases } from "@/app/dashboard/cases/data";
 
 // ─── Helper Mappers ─────────────────────────────────────────────────────────
 
@@ -223,7 +224,15 @@ class ForensicDataStore {
 
   getCaseById(id: string): CaseDetail | undefined {
     this.loadFromDisk();
-    return this.cases.find((c) => c.id.toLowerCase() === id.toLowerCase());
+    const found = this.cases.find((c) => c.id.toLowerCase() === id.toLowerCase());
+    if (found) return found;
+    const seed = allCases.find((c) => c.id.toLowerCase() === id.toLowerCase());
+    if (seed) {
+      this.cases.push(seed);
+      this.saveToDisk();
+      return seed;
+    }
+    return undefined;
   }
 
   createCase(data: {
@@ -700,6 +709,40 @@ class ForensicDataStore {
     caseItem.aiMessages.push(aiMsg);
     this.saveToDisk();
     return aiMsg;
+  }
+
+  appendInvestigatorTurn(
+    caseId: string,
+    userMessage: string,
+    aiResponse: string
+  ): { userMsg: AIMessage; aiMsg: AIMessage } | undefined {
+    this.loadFromDisk();
+    let caseItem = this.getCaseById(caseId);
+    if (!caseItem) {
+      return undefined;
+    }
+
+    const now = new Date();
+    const timeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
+
+    const userMsg: AIMessage = {
+      id: `M-${String(caseItem.aiMessages.length + 1).padStart(3, "0")}`,
+      role: "user",
+      content: userMessage,
+      timestamp: timeStr,
+    };
+    caseItem.aiMessages.push(userMsg);
+
+    const aiMsg: AIMessage = {
+      id: `M-${String(caseItem.aiMessages.length + 1).padStart(3, "0")}`,
+      role: "ai",
+      content: aiResponse,
+      timestamp: timeStr,
+    };
+    caseItem.aiMessages.push(aiMsg);
+
+    this.saveToDisk();
+    return { userMsg, aiMsg };
   }
 
   // ── Networks ─────────────────────────────────────────────────────────────

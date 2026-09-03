@@ -13,6 +13,13 @@ export async function GET(
     try {
       const dbRes = await fetchCaseDetailByIdFromDb(caseId);
       if (dbRes.success && dbRes.data) {
+        const localCase = dataStore.getCaseById(caseId);
+        if (localCase && localCase.aiMessages && localCase.aiMessages.length > 0) {
+          return NextResponse.json(
+            { ...dbRes.data, aiMessages: localCase.aiMessages },
+            { status: 200 }
+          );
+        }
         return NextResponse.json(dbRes.data, { status: 200 });
       }
     } catch (dbErr) {
