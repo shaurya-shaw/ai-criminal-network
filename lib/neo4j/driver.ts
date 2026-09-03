@@ -212,21 +212,20 @@ export async function initializeNeo4jSchema(): Promise<{
   executedStatements: number;
   results: { statement: string; status: "SUCCESS" | "FAILED"; error?: string }[];
 }> {
-  const results: { statement: string; status: "SUCCESS" | "FAILED"; error?: string }[] = [];
-
-  for (const stmt of SCHEMA_STATEMENTS) {
+  const promises = SCHEMA_STATEMENTS.map(async (stmt) => {
     try {
       await writeQuery(stmt);
-      results.push({ statement: stmt, status: "SUCCESS" });
+      return { statement: stmt, status: "SUCCESS" as const };
     } catch (err) {
-      results.push({
+      return {
         statement: stmt,
-        status: "FAILED",
+        status: "FAILED" as const,
         error: err instanceof Error ? err.message : String(err),
-      });
+      };
     }
-  }
+  });
 
+  const results = await Promise.all(promises);
   const success = results.every((r) => r.status === "SUCCESS");
   return {
     success,

@@ -407,7 +407,15 @@ async function syncSourceGraph(
     validEvidence.set(id, graphId);
     result.evidence += 1;
   }
-  await mergeItemRows(caseId, "Evidence", "HAS_EVIDENCE", evidenceRows);
+
+  // Merge entities, events, and evidence in parallel
+  await Promise.all([
+    ...Array.from(byLabel.entries()).map(([label, rows]) =>
+      mergeEntityRows(caseId, label, rows),
+    ),
+    eventRows.length ? mergeItemRows(caseId, "Event", "HAS_EVENT", eventRows) : Promise.resolve(),
+    evidenceRows.length ? mergeItemRows(caseId, "Evidence", "HAS_EVIDENCE", evidenceRows) : Promise.resolve(),
+  ]);
 
   const relationshipGroups = new Map<string, RelationshipRow[]>();
   const seenRelationships = new Set<string>();
@@ -461,7 +469,7 @@ async function syncSourceGraph(
   const derivedGroups = new Map<string, RelationshipRow[]>();
   const addDerived = (type: string, row: RelationshipRow) => {
     const rows = derivedGroups.get(type) || [];
-    if (!rows.some((item) => item.id === row.id)) rows.push(row);
+    rows.push(row);
     derivedGroups.set(type, rows);
   };
   for (const event of (Array.isArray(extraction.events) ? extraction.events : []) as ExtractedEvent[]) {
@@ -527,8 +535,11 @@ async function syncSourceGraph(
     }
   }
 
-  for (const [type, rows] of relationshipGroups) await mergeRelationshipRows(type, rows);
-  for (const [type, rows] of derivedGroups) await mergeRelationshipRows(type, rows);
+  // Merge direct and derived relationships in parallel
+  await Promise.all([
+    ...Array.from(relationshipGroups.entries()).map(([type, rows]) => mergeRelationshipRows(type, rows)),
+    ...Array.from(derivedGroups.entries()).map(([type, rows]) => mergeRelationshipRows(type, rows)),
+  ]);
   return result;
 }
 
@@ -544,16 +555,30 @@ function combineDiagnostics(target: GraphSyncDiagnostics, source: GraphSyncDiagn
 export async function syncCaseGraph(caseId: string): Promise<GraphSyncDiagnostics> {
   const input = await fetchCaseGraphInputFromDb(caseId);
   if (!input.success || !input.case) throw new Error(input.error || `Case '${caseId}' not found.`);
+  const caseRecord = input.case;
   await ensureSchema();
   const result = diagnostics();
-  await mergeCase(input.case);
-  for (const source of input.sources) {
-    try {
-      combineDiagnostics(result, await syncSourceGraph(input.case, source));
-    } catch (error) {
-      recordSkip(result, `Unable to synchronize source ${source.id}: ${error instanceof Error ? error.message : String(error)}`);
-    }
+  await mergeCase(caseRecord);
+
+  // Sync sources concurrently
+  const sourceDiagnostics = await Promise.all(
+    input.sources.map(async (source) => {
+      try {
+        return await syncSourceGraph(caseRecord, source);
+      } catch (error) {
+        recordSkip(
+          result,
+          `Unable to synchronize source ${source.id}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+        return null;
+      }
+    }),
+  );
+
+  for (const diag of sourceDiagnostics) {
+    if (diag) combineDiagnostics(result, diag);
   }
+
   return result;
 }
 
@@ -584,34 +609,36 @@ function nodeType(labels: string[]): InvestigationNodeType {
 }
 
 export async function readCaseGraph(caseId: string): Promise<InvestigationGraphData> {
-  const nodeRows = await readQuery<{ node: { labels: string[]; properties: Record<string, unknown> } }>(
-    `
-      MATCH (c:Case {id: $caseId})
-      OPTIONAL MATCH (c)-[:HAS_ENTITY|HAS_EVIDENCE|HAS_EVENT]->(member)
-      WITH c, [node IN collect(member) WHERE node IS NOT NULL] AS members
-      UNWIND [c] + members AS node
-      RETURN DISTINCT node
-    `,
-    { caseId },
-  );
-  const edgeRows = await readQuery<{
-    relationship: { properties: Record<string, unknown> };
-    source: string;
-    target: string;
-    type: string;
-  }>(
-    `
-      MATCH (c:Case {id: $caseId})
-      OPTIONAL MATCH (c)-[:HAS_ENTITY|HAS_EVIDENCE|HAS_EVENT]->(member)
-      WITH c, [node IN collect(member) WHERE node IS NOT NULL] AS members
-      WITH [c] + members AS graphNodes
-      UNWIND graphNodes AS source
-      MATCH (source)-[relationship]->(target)
-      WHERE target IN graphNodes
-      RETURN DISTINCT relationship, source.id AS source, target.id AS target, type(relationship) AS type
-    `,
-    { caseId },
-  );
+  const [nodeRows, edgeRows] = await Promise.all([
+    readQuery<{ node: { labels: string[]; properties: Record<string, unknown> } }>(
+      `
+        MATCH (c:Case {id: $caseId})
+        OPTIONAL MATCH (c)-[:HAS_ENTITY|HAS_EVIDENCE|HAS_EVENT]->(member)
+        WITH c, [node IN collect(member) WHERE node IS NOT NULL] AS members
+        UNWIND [c] + members AS node
+        RETURN DISTINCT node
+      `,
+      { caseId },
+    ),
+    readQuery<{
+      relationship: { properties: Record<string, unknown> };
+      source: string;
+      target: string;
+      type: string;
+    }>(
+      `
+        MATCH (c:Case {id: $caseId})
+        OPTIONAL MATCH (c)-[:HAS_ENTITY|HAS_EVIDENCE|HAS_EVENT]->(member)
+        WITH c, [node IN collect(member) WHERE node IS NOT NULL] AS members
+        WITH [c] + members AS graphNodes
+        UNWIND graphNodes AS source
+        MATCH (source)-[relationship]->(target)
+        WHERE target IN graphNodes
+        RETURN DISTINCT relationship, source.id AS source, target.id AS target, type(relationship) AS type
+      `,
+      { caseId },
+    ),
+  ]);
 
   const nodes: InvestigationGraphNode[] = nodeRows.map(({ node }) => {
     const properties = serialiseValue(node.properties) as Record<string, unknown>;
@@ -642,9 +669,229 @@ export async function readCaseGraph(caseId: string): Promise<InvestigationGraphD
   return { nodes, edges };
 }
 
+export async function buildGraphFromCaseInput(caseId: string): Promise<{ graph: InvestigationGraphData; sync: GraphSyncDiagnostics }> {
+  const input = await fetchCaseGraphInputFromDb(caseId);
+  const sync: GraphSyncDiagnostics = { entities: 0, evidence: 0, events: 0, relationships: 0, skipped: 0, errors: [] };
+  if (!input.success || !input.case) {
+    return { graph: { nodes: [], edges: [] }, sync };
+  }
+
+  const nodes: InvestigationGraphNode[] = [];
+  const edges: InvestigationGraphEdge[] = [];
+  const nodeMap = new Map<string, InvestigationGraphNode>();
+
+  const caseNode: InvestigationGraphNode = {
+    id: input.case.id,
+    type: "Case",
+    label: input.case.title,
+    riskScore: undefined,
+    confidence: undefined,
+    properties: {
+      id: input.case.id,
+      title: input.case.title,
+      summary: input.case.summary,
+      status: input.case.status,
+      priority: input.case.priority,
+    },
+  };
+  nodes.push(caseNode);
+  nodeMap.set(caseNode.id, caseNode);
+
+  for (const source of input.sources) {
+    const ext = source.extracted_data as any;
+    if (!ext) continue;
+
+    const provenance = sourceKey(input.case.id, source.id);
+    const validEntities = new Map<string, string>();
+
+    for (const ent of ext.entities || []) {
+      const id = cleanId(ent?.id);
+      const name = cleanText(ent?.name);
+      if (!id || !name) continue;
+      const gId = entityGraphId(input.case.id, source.id, id);
+      validEntities.set(id, gId);
+
+      const rawType = ent?.type || "Person";
+      const label =
+        ENTITY_LABELS[rawType] ||
+        ENTITY_LABELS[rawType.trim()] ||
+        ENTITY_LABELS[rawType.toUpperCase()] ||
+        "Person";
+
+      if (!nodeMap.has(gId)) {
+        const node: InvestigationGraphNode = {
+          id: gId,
+          type: label as InvestigationNodeType,
+          label: name,
+          riskScore: numberOrNull(ent.riskScore) ?? undefined,
+          confidence: numberOrNull(ent.confidence) ?? undefined,
+          properties: {
+            id: gId,
+            extractedId: id,
+            caseId: input.case.id,
+            sourceId: source.id,
+            sourceKey: provenance,
+            name,
+            type: ent.type,
+            role: cleanText(ent.role),
+            riskScore: numberOrNull(ent.riskScore),
+            confidence: numberOrNull(ent.confidence),
+            attributes: ent.attributes,
+          },
+        };
+        nodes.push(node);
+        nodeMap.set(gId, node);
+        sync.entities += 1;
+
+        edges.push({
+          id: `${input.case.id}::has::${gId}`,
+          source: input.case.id,
+          target: gId,
+          type: "HAS_ENTITY",
+          label: "HAS ENTITY",
+          properties: {},
+        });
+      }
+    }
+
+    for (const ev of ext.events || []) {
+      const id = cleanId(ev?.id);
+      const title = cleanText(ev?.title) || cleanText(ev?.type) || "Event";
+      if (!id) continue;
+      const gId = eventGraphId(input.case.id, source.id, id);
+
+      if (!nodeMap.has(gId)) {
+        const node: InvestigationGraphNode = {
+          id: gId,
+          type: "Event",
+          label: title,
+          properties: {
+            id: gId,
+            extractedId: id,
+            title,
+            type: ev.type,
+            timestamp: ev.timestamp,
+            description: ev.description,
+            location: ev.location,
+          },
+        };
+        nodes.push(node);
+        nodeMap.set(gId, node);
+        sync.events += 1;
+
+        edges.push({
+          id: `${input.case.id}::has::${gId}`,
+          source: input.case.id,
+          target: gId,
+          type: "HAS_EVENT",
+          label: "HAS EVENT",
+          properties: {},
+        });
+      }
+
+      for (const entRef of ev.entitiesInvolved || []) {
+        const targetGId = validEntities.get(entRef);
+        if (targetGId) {
+          edges.push({
+            id: `${targetGId}::INVOLVED_IN::${gId}`,
+            source: targetGId,
+            target: gId,
+            type: "INVOLVED_IN",
+            label: "INVOLVED IN",
+            properties: {},
+          });
+        }
+      }
+    }
+
+    for (const evRef of ext.evidenceReferences || []) {
+      const id = cleanId(evRef?.id);
+      const title = cleanText(evRef?.title) || cleanText(evRef?.evidenceType) || "Evidence";
+      if (!id) continue;
+      const gId = evidenceGraphId(input.case.id, source.id, id);
+
+      if (!nodeMap.has(gId)) {
+        const node: InvestigationGraphNode = {
+          id: gId,
+          type: "Evidence",
+          label: title,
+          confidence: numberOrNull(evRef.relevanceScore) ?? undefined,
+          properties: {
+            id: gId,
+            extractedId: id,
+            title,
+            evidenceType: evRef.evidenceType,
+            excerpt: evRef.excerpt,
+            relevanceScore: evRef.relevanceScore,
+          },
+        };
+        nodes.push(node);
+        nodeMap.set(gId, node);
+        sync.evidence += 1;
+
+        edges.push({
+          id: `${input.case.id}::has::${gId}`,
+          source: input.case.id,
+          target: gId,
+          type: "HAS_EVIDENCE",
+          label: "HAS EVIDENCE",
+          properties: {},
+        });
+      }
+
+      for (const entRef of evRef.entitiesReferenced || []) {
+        const targetGId = validEntities.get(entRef);
+        if (targetGId) {
+          edges.push({
+            id: `${targetGId}::MENTIONED_IN::${gId}`,
+            source: targetGId,
+            target: gId,
+            type: "MENTIONED_IN",
+            label: "MENTIONED IN",
+            properties: {},
+          });
+        }
+      }
+    }
+
+    for (const rel of ext.relationships || []) {
+      const srcGId = validEntities.get(rel.source);
+      const tgtGId = validEntities.get(rel.target);
+      if (srcGId && tgtGId && srcGId !== tgtGId) {
+        const relType = cleanText(rel.type) || "ASSOCIATED_WITH";
+        edges.push({
+          id: `${srcGId}::${relType}::${tgtGId}`,
+          source: srcGId,
+          target: tgtGId,
+          type: relType,
+          label: relType.replaceAll("_", " "),
+          confidence: numberOrNull(rel.confidence) ?? undefined,
+          properties: { description: rel.description },
+        });
+        sync.relationships += 1;
+      }
+    }
+  }
+
+  return { graph: { nodes, edges }, sync };
+}
+
 export async function syncAndReadCaseGraph(caseId: string) {
-  const sync = await syncCaseGraph(caseId);
-  return { graph: await readCaseGraph(caseId), sync };
+  try {
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Neo4j request timed out.")), 15000)
+    );
+    const syncPromise = (async () => {
+      const sync = await syncCaseGraph(caseId);
+      const graph = await readCaseGraph(caseId);
+      return { graph, sync };
+    })();
+
+    return await Promise.race([syncPromise, timeoutPromise]);
+  } catch (error) {
+    console.warn(`[CaseGraph] Neo4j sync/read fallback to local DB for case ${caseId}:`, error);
+    return await buildGraphFromCaseInput(caseId);
+  }
 }
 
 export function isCaseMembershipRelationship(type: string) {
